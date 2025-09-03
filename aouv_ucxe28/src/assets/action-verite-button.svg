@@ -1,0 +1,24 @@
+<svg width="500" height="500" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="500" y2="500" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="1" stop-color="#D946EF"/>
+    </linearGradient>
+    <filter id="shadow" x="-50" y="-50" width="600" height="600" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="15" in="SourceAlpha" result="blur"/>
+      <feOffset dx="0" dy="4"/>
+      <feComposite in2="SourceAlpha" operator="out" k2="-1" k3="1"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="500" height="500" rx="12" fill="url(#paint0_linear)"/>
+  <g filter="url(#shadow)">
+    <rect width="500" height="500" rx="12" fill="url(#paint0_linear)"/>
+  </g>
+  <text x="50%" y="40%" dominant-baseline="middle" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="40" font-weight="bold" fill="white">Action ou</text>
+  <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="40" font-weight="bold" fill="white">Vérité</text>
+  <text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="Montserrat, sans-serif" font-size="24" font-weight="bold" fill="white">Jouer Maintenant</text>
+</svg>
