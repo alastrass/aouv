@@ -26,8 +26,8 @@ export default defineConfig({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Action ou Vérité - Jeu pour Couples',
-        short_name: 'Action ou Vérité',
+        name: 'Le Temple des Plaisirs - Jeux Intimes',
+        short_name: 'Temple des Plaisirs',
         description: 'Un jeu intime et amusant pour les couples adultes',
         theme_color: '#1e1b4b',
         background_color: '#0f172a',
