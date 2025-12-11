@@ -26,8 +26,9 @@ const TargetScoreSetup: React.FC<TargetScoreSetupProps> = ({ onTargetScoreDefine
       <select
         onChange={handleScoreChange}
         className="w-full px-4 py-3 bg-slate-700 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-400"
-        defaultValue="10" // Set a default value
+        defaultValue="10"
       >
+        <option value="5">5</option>
         <option value="10">10</option>
         <option value="20">20</option>
         <option value="30">30</option>
