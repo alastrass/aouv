@@ -1,0 +1,26 @@
+<svg width="192" height="192" viewBox="0 0 192 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="192" height="192" rx="32" fill="url(#gradient)"/>
+  
+  <!-- Hearts -->
+  <g transform="translate(96, 96)">
+    <!-- Left Heart -->
+    <path d="M-20 -10 C-20 -20, -10 -25, 0 -15 C10 -25, 20 -20, 20 -10 C20 0, 0 20, 0 20 C0 20, -20 0, -20 -10 Z" fill="#F472B6" opacity="0.9"/>
+    
+    <!-- Right Heart -->
+    <path d="M-15 5 C-15 -5, -5 -10, 5 0 C15 -10, 25 -5, 25 5 C25 15, 5 35, 5 35 C5 35, -15 15, -15 5 Z" fill="#EC4899" opacity="0.8"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="96" y="140" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+    Action ou Vérité
+  </text>
+  
+  <defs>
+    <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#7c3aed;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
