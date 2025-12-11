@@ -9,9 +9,12 @@ import ScoreBoard from './ScoreBoard';
 
 interface TruthOrDareGameProps {
   onBack: () => void;
+  onGameOver?: () => void;
+  targetScore?: number | null;
+  prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
 }
 
-const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack }) => {
+const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, targetScore, prizes }) => {
   const [gameState, setGameState] = useState<GameState>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -53,6 +56,15 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack }) => {
   useEffect(() => {
     localStorage.setItem('truthOrDare_customChallenges', JSON.stringify(customChallenges));
   }, [customChallenges]);
+
+  useEffect(() => {
+    if (targetScore && players.length > 0 && gameState === 'playing') {
+      const winner = players.find(p => p.score >= targetScore);
+      if (winner && onGameOver) {
+        onGameOver();
+      }
+    }
+  }, [players, targetScore, gameState, onGameOver]);
 
   const handlePlayersSetup = (setupPlayers: Player[], selectedCategory: Category, customs: Challenge[]) => {
     setPlayers(setupPlayers);

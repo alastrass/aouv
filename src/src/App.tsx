@@ -82,7 +82,7 @@ function App() {
   }
 
   if (appState === 'truth-or-dare') {
-    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} />;
+    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} targetScore={targetScore} prizes={prizes} />;
   }
 
   if (appState === 'kiffe-ou-kiffe-pas') {
