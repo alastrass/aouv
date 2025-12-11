@@ -110,14 +110,14 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setPlayers(prev => prev.map((player, index) => {
       if (index === currentPlayerIndex) {
         return { ...player, score: player.score + (isValid ? 1 : 0) };
-      } else if (index === (currentPlayerIndex + 1) % 2) {
+      } else if (index === (currentPlayerIndex + 1) % players.length) {
         return { ...player, score: player.score + (isValid ? 0 : 1) };
       }
       return player;
     }));
 
     setCurrentChallenge(null);
-    setCurrentPlayerIndex((prev) => (prev + 1) % 2);
+    setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
   };
 
   const resetGame = () => {
