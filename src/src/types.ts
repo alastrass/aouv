@@ -5,9 +5,10 @@ export type AppState =
   | 'truth-or-dare'
   | 'kiffe-ou-kiffe-pas'
   | 'karma-sutra'
-  | 'puzzle';
+  | 'puzzle'
+  | 'stop-tergiverser';
 
-export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle';
+export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser';
 
 export type Category = 'soft' | 'intense';
 

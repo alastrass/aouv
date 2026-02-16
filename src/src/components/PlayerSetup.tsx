@@ -7,15 +7,19 @@ import TargetScoreSetup from './TargetScoreSetup';
 interface PlayerSetupProps {
   onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }) => void;
   initialCustomChallenges?: Challenge[];
+  gameType?: 'truth-or-dare' | 'stop-tergiverser';
+  onBack?: () => void;
+  targetScore?: number | null;
+  prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
 }
 
-const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [] }) => {
+const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [], gameType = 'truth-or-dare', onBack }) => {
   const [player1Name, setPlayer1Name] = useState('');
   const [player2Name, setPlayer2Name] = useState('');
   const [category, setCategory] = useState<Category>('soft');
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>(initialCustomChallenges);
   const [newChallenge, setNewChallenge] = useState<CustomChallengeInput>({
-    type: 'truth',
+    type: gameType === 'stop-tergiverser' ? 'dare' : 'truth',
     category: 'soft',
     text: ''
   });
@@ -32,7 +36,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
       };
       setCustomChallenges(prev => [...prev, challenge]);
       setNewChallenge({
-        type: 'truth',
+        type: gameType === 'stop-tergiverser' ? 'dare' : 'truth',
         category: 'soft',
         text: ''
       });
@@ -181,7 +185,9 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
               Défis Personnalisés (Optionnel)
             </h2>
             <p className="text-purple-200 text-sm mb-4">
-              Ajoutez vos propres questions et actions pour personnaliser votre jeu
+              {gameType === 'stop-tergiverser'
+                ? 'Ajoutez vos propres défis d\'action pour personnaliser votre jeu'
+                : 'Ajoutez vos propres questions et actions pour personnaliser votre jeu'}
             </p>
 
             {!showCustomForm ? (
@@ -195,19 +201,21 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
             ) : (
               <div className="bg-slate-700/50 rounded-lg p-6 mb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-purple-200 text-sm font-medium mb-2">
-                      Type
-                    </label>
-                    <select
-                      value={newChallenge.type}
-                      onChange={(e) => setNewChallenge(prev => ({ ...prev, type: e.target.value as 'truth' | 'dare' }))}
-                      className="w-full px-3 py-2 bg-slate-600 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-400"
-                    >
-                      <option value="truth">Vérité</option>
-                      <option value="dare">Action</option>
-                    </select>
-                  </div>
+                  {gameType !== 'stop-tergiverser' && (
+                    <div>
+                      <label className="block text-purple-200 text-sm font-medium mb-2">
+                        Type
+                      </label>
+                      <select
+                        value={newChallenge.type}
+                        onChange={(e) => setNewChallenge(prev => ({ ...prev, type: e.target.value as 'truth' | 'dare' }))}
+                        className="w-full px-3 py-2 bg-slate-600 border border-purple-500/30 rounded-lg text-white focus:outline-none focus:border-purple-400"
+                      >
+                        <option value="truth">Vérité</option>
+                        <option value="dare">Action</option>
+                      </select>
+                    </div>
+                  )}
                   <div>
                     <label className="block text-purple-200 text-sm font-medium mb-2">
                       Catégorie

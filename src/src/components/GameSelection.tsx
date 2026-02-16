@@ -53,12 +53,21 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
       available: true,
       players: '2 joueurs',
       duration: '10-30 min'
+    },
+    {
+      id: 'stop-tergiverser' as GameType,
+      title: 'Arrête de Tergiverser',
+      description: 'Un jeu d\'action pur ! Des défis sensuels et osés qui mettent l\'ambiance. Pas de questions, que de l\'action pour pimenter votre soirée.',
+      icon: Heart,
+      color: 'from-rose-600 to-red-600',
+      borderColor: 'border-rose-500/30',
+      available: true,
+      players: '2 joueurs',
+      duration: '15-30 min'
     }
   ];
 
-  // TEMPORARY: Show only Truth or Dare game
-  // To restore all games, change this back to allGames
-  const games = allGames.filter(game => game.id === 'truth-or-dare');
+  const games = allGames.filter(game => game.id === 'truth-or-dare' || game.id === 'stop-tergiverser');
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8 safe-area-inset">
       <div className="max-w-4xl mx-auto">

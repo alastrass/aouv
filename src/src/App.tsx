@@ -7,6 +7,7 @@ import TruthOrDareGame from './components/TruthOrDareGame';
 import KiffeOuKiffePasGame from './components/KiffeOuKiffePasGame';
 import KarmaSutraGame from './components/KarmaSutraGame';
 import PuzzleGame from './components/PuzzleGame';
+import StopTergiverserGame from './components/StopTergiverserGame';
 import PaymentStore from './components/PaymentStore';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PlayerSetup from './components/PlayerSetup';
@@ -95,6 +96,10 @@ function App() {
 
   if (appState === 'puzzle') {
     return <PuzzleGame onBack={handleBackToGameSelection} />;
+  }
+
+  if (appState === 'stop-tergiverser') {
+    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} targetScore={targetScore} prizes={prizes} />;
   }
 
   if (appState === 'game-over') {
