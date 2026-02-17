@@ -3,7 +3,7 @@ import { RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
 import { Player, Challenge, Category } from '../types';
 import { challenges } from '../data/challenges';
 import PlayerSetup from './PlayerSetup';
-import WheelSpinner from './WheelSpinner';
+import IntensitySpinner from './IntensitySpinner';
 import ScoreBoard from './ScoreBoard';
 
 interface StopTergiverserGameProps {
@@ -94,6 +94,10 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
       setCurrentChallenge(selectedChallenge);
       setUsedChallenges(prev => [...prev, randomIndex]);
       setIsSpinning(false);
+
+      setTimeout(() => {
+        setShowWheel(false);
+      }, 500);
     }, 2000);
   };
 
@@ -158,7 +162,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
 
         {showWheel ? (
           <div className="mb-8">
-            <WheelSpinner isSpinning={isSpinning} />
+            <IntensitySpinner isSpinning={isSpinning} />
           </div>
         ) : null}
 
