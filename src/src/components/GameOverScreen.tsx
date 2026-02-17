@@ -4,7 +4,7 @@ import { Trophy } from 'lucide-react';
 
 interface GameOverScreenProps {
   players: Player[];
-  targetScore: number;
+  targetScore: number | string;
   prizes: { [playerId: number]: { prize: string; isVisible: boolean } };
   onBack: () => void;
 }
@@ -27,7 +27,7 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({ players, targetScore, p
             <p className="text-purple-200">
               {isTie
                 ? 'Match nul ! Tous les gagnants ont atteint le score cible.'
-                : `Félicitations à ${winners[0].name} pour avoir atteint ${targetScore} points !`}
+                : `Félicitations à ${winners[0].name} pour avoir atteint ${typeof targetScore === 'number' ? `${targetScore} points` : '2 manches'} !`}
             </p>
           </div>
 

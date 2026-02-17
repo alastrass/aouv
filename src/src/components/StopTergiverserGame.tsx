@@ -9,7 +9,7 @@ import ScoreBoard from './ScoreBoard';
 interface StopTergiverserGameProps {
   onBack: () => void;
   onGameOver?: () => void;
-  targetScore?: number | null;
+  targetScore?: number | string | null;
   prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
 }
 
@@ -56,7 +56,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
 
   useEffect(() => {
     if (targetScore && players.length > 0 && gameState === 'playing') {
-      const winner = players.find(p => p.score >= targetScore);
+      const winner = players.find(p => typeof targetScore === 'number' ? p.score >= targetScore : p.score >= 2);
       if (winner && onGameOver) {
         onGameOver();
       }

@@ -10,6 +10,8 @@ export type AppState =
 
 export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser';
 
+export type GameState = 'setup' | 'playing';
+
 export type Category = 'soft' | 'intense';
 
 export interface Challenge {

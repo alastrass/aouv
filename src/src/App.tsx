@@ -18,7 +18,7 @@ function App() {
   const [isAgeVerified, setIsAgeVerified] = useState(false);
   const [currentGame, setCurrentGame] = useState<GameType | null>(null);
   const [players, setPlayers] = useState<Player[] | null>(null);
-  const [targetScore, setTargetScore] = useState<number | null>(null);
+  const [targetScore, setTargetScore] = useState<number | string | null>(null);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } } | null>(null);
 
   const handleAgeVerification = (verified: boolean) => {
@@ -52,7 +52,7 @@ function App() {
     players: Player[],
     category: string,
     customChallenges: any[],
-    targetScore: number,
+    targetScore: number | string,
     prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => {
     setPlayers(players);

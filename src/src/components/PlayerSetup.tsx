@@ -5,11 +5,11 @@ import PrizeDefinition from './PrizeDefinition';
 import TargetScoreSetup from './TargetScoreSetup';
 
 interface PlayerSetupProps {
-  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }) => void;
+  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number | string, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }) => void;
   initialCustomChallenges?: Challenge[];
   gameType?: 'truth-or-dare' | 'stop-tergiverser';
   onBack?: () => void;
-  targetScore?: number | null;
+  targetScore?: number | string | null;
   prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
 }
 
@@ -24,7 +24,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
     text: ''
   });
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const [targetScore, setTargetScore] = useState(10);
+  const [targetScore, setTargetScore] = useState<number | string>(10);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
 
   const handleAddCustomChallenge = () => {
