@@ -631,7 +631,7 @@ export const challenges: Record<Category, Challenge[]> = {
   "id": 187,
   "type": "dare",
   "category": "intense",
-  "text": "Ta main est possédée, tu la contrôles pendant 3 minutes."
+  "text": "Masque les yeux de ta partenaire et possède sa main...  Guide là partout ou tu voudras."
 },
 {
   "id": 188,
