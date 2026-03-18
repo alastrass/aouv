@@ -25,15 +25,23 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
 
   useEffect(() => {
-    const savedPlayers = localStorage.getItem('stopTergiverser_players');
-    const savedCategory = localStorage.getItem('stopTergiverser_category');
-    const savedUsed = localStorage.getItem('stopTergiverser_usedChallenges');
-    const savedCustom = localStorage.getItem('stopTergiverser_customChallenges');
+    try {
+      const savedPlayers = localStorage.getItem('stopTergiverser_players');
+      const savedCategory = localStorage.getItem('stopTergiverser_category');
+      const savedUsed = localStorage.getItem('stopTergiverser_usedChallenges');
+      const savedCustom = localStorage.getItem('stopTergiverser_customChallenges');
 
-    if (savedPlayers) setPlayers(JSON.parse(savedPlayers));
-    if (savedCategory) setCategory(savedCategory as Category);
-    if (savedUsed) setUsedChallenges(JSON.parse(savedUsed));
-    if (savedCustom) setCustomChallenges(JSON.parse(savedCustom));
+      if (savedPlayers) setPlayers(JSON.parse(savedPlayers));
+      if (savedCategory) setCategory(savedCategory as Category);
+      if (savedUsed) setUsedChallenges(JSON.parse(savedUsed));
+      if (savedCustom) setCustomChallenges(JSON.parse(savedCustom));
+    } catch (error) {
+      console.error('Error loading game data from localStorage:', error);
+      localStorage.removeItem('stopTergiverser_players');
+      localStorage.removeItem('stopTergiverser_category');
+      localStorage.removeItem('stopTergiverser_usedChallenges');
+      localStorage.removeItem('stopTergiverser_customChallenges');
+    }
   }, []);
 
   useEffect(() => {
@@ -63,17 +71,27 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     }
   }, [players, targetScore, gameState, onGameOver]);
 
-  const handlePlayersSetup = (setupPlayers: Player[], selectedCategory: Category, customs: Challenge[]) => {
+  const handlePlayersSetup = (
+    setupPlayers: Player[],
+    selectedCategory: Category,
+    customs: Challenge[],
+    setupTargetScore?: number | string,
+    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } }
+  ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setGameState('playing');
   };
 
-  const getAvailableChallenges = (): Challenge[] => {
+  const getAllChallenges = (): Challenge[] => {
     const baseChallenges = challenges[category].filter(c => c.type === 'dare');
-    const allChallenges = [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
-    return allChallenges.filter((_, index) => !usedChallenges.includes(index));
+    return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
+  };
+
+  const getAvailableChallenges = (): Challenge[] => {
+    const allChallenges = getAllChallenges();
+    return allChallenges.filter((challenge) => !usedChallenges.includes(challenge.id));
   };
 
   const spinWheel = () => {
@@ -92,7 +110,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
       const selectedChallenge = availableChallenges[randomIndex];
 
       setCurrentChallenge(selectedChallenge);
-      setUsedChallenges(prev => [...prev, randomIndex]);
+      setUsedChallenges(prev => [...prev, selectedChallenge.id]);
       setIsSpinning(false);
 
       setTimeout(() => {
@@ -158,7 +176,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
           </button>
         </div>
 
-        <ScoreBoard players={players} />
+        <ScoreBoard players={players} currentPlayerIndex={currentPlayerIndex} />
 
         {showWheel ? (
           <div className="mb-8">

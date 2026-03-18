@@ -14,7 +14,7 @@ import PlayerSetup from './components/PlayerSetup';
 import GameOverScreen from './components/GameOverScreen';
 
 function App() {
-  const [appState, setAppState] = useState<AppState | 'store'>('welcome');
+  const [appState, setAppState] = useState<AppState>('welcome');
   const [isAgeVerified, setIsAgeVerified] = useState(false);
   const [currentGame, setCurrentGame] = useState<GameType | null>(null);
   const [players, setPlayers] = useState<Player[] | null>(null);
@@ -58,7 +58,9 @@ function App() {
     setPlayers(players);
     setTargetScore(targetScore);
     setPrizes(prizes);
-    setAppState('truth-or-dare'); // Start with Truth or Dare for now
+    if (currentGame) {
+      setAppState(currentGame);
+    }
   };
 
   const handleGameOver = () => {
@@ -104,7 +106,20 @@ function App() {
 
   if (appState === 'game-over') {
     if (!players || targetScore === null || !prizes) {
-      return <div>Error: Game data missing</div>;
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center px-4">
+          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-purple-500/20 text-center">
+            <h1 className="text-2xl font-bold text-white mb-4">Erreur</h1>
+            <p className="text-purple-200 mb-6">Données de jeu manquantes</p>
+            <button
+              onClick={handleBackToGameSelection}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold rounded-xl transition-all"
+            >
+              Retour
+            </button>
+          </div>
+        </div>
+      );
     }
     return (
       <GameOverScreen

@@ -27,15 +27,23 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
 
   // Load data from localStorage
   useEffect(() => {
-    const savedPlayers = localStorage.getItem('truthOrDare_players');
-    const savedCategory = localStorage.getItem('truthOrDare_category');
-    const savedUsed = localStorage.getItem('truthOrDare_usedChallenges');
-    const savedCustom = localStorage.getItem('truthOrDare_customChallenges');
-    
-    if (savedPlayers) setPlayers(JSON.parse(savedPlayers));
-    if (savedCategory) setCategory(savedCategory as Category);
-    if (savedUsed) setUsedChallenges(JSON.parse(savedUsed));
-    if (savedCustom) setCustomChallenges(JSON.parse(savedCustom));
+    try {
+      const savedPlayers = localStorage.getItem('truthOrDare_players');
+      const savedCategory = localStorage.getItem('truthOrDare_category');
+      const savedUsed = localStorage.getItem('truthOrDare_usedChallenges');
+      const savedCustom = localStorage.getItem('truthOrDare_customChallenges');
+
+      if (savedPlayers) setPlayers(JSON.parse(savedPlayers));
+      if (savedCategory) setCategory(savedCategory as Category);
+      if (savedUsed) setUsedChallenges(JSON.parse(savedUsed));
+      if (savedCustom) setCustomChallenges(JSON.parse(savedCustom));
+    } catch (error) {
+      console.error('Error loading game data from localStorage:', error);
+      localStorage.removeItem('truthOrDare_players');
+      localStorage.removeItem('truthOrDare_category');
+      localStorage.removeItem('truthOrDare_usedChallenges');
+      localStorage.removeItem('truthOrDare_customChallenges');
+    }
   }, []);
 
   // Save data to localStorage
@@ -66,22 +74,32 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     }
   }, [players, targetScore, gameState, onGameOver]);
 
-  const handlePlayersSetup = (setupPlayers: Player[], selectedCategory: Category, customs: Challenge[]) => {
+  const handlePlayersSetup = (
+    setupPlayers: Player[],
+    selectedCategory: Category,
+    customs: Challenge[],
+    setupTargetScore?: number | string,
+    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } }
+  ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setGameState('playing');
   };
 
-  const getAvailableChallenges = (): Challenge[] => {
+  const getAllChallenges = (): Challenge[] => {
     const baseChallenges = challenges[category];
-    const allChallenges = [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
-    return allChallenges.filter((_, index) => !usedChallenges.includes(index));
+    return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
+  };
+
+  const getAvailableChallenges = (): Challenge[] => {
+    const allChallenges = getAllChallenges();
+    return allChallenges.filter((challenge) => !usedChallenges.includes(challenge.id));
   };
 
   const spinWheel = () => {
     const availableChallenges = getAvailableChallenges();
-    
+
     if (availableChallenges.length === 0) {
       setUsedChallenges([]);
       return;
@@ -89,15 +107,15 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
 
     setIsSpinning(true);
     setShowWheel(true);
-    
+
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * availableChallenges.length);
       const selectedChallenge = availableChallenges[randomIndex];
-      
+
       setCurrentChallenge(selectedChallenge);
-      setUsedChallenges(prev => [...prev, randomIndex]);
+      setUsedChallenges(prev => [...prev, selectedChallenge.id]);
       setIsSpinning(false);
-      
+
       setTimeout(() => {
         setShowWheel(false);
       }, 1000);

@@ -67,7 +67,7 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
     }
   ];
 
-  const games = allGames.filter(game => game.id === 'truth-or-dare' || game.id === 'stop-tergiverser');
+  const games = allGames;
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8 safe-area-inset">
       <div className="max-w-4xl mx-auto">
