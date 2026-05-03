@@ -12,6 +12,7 @@ import PaymentStore from './components/PaymentStore';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PlayerSetup from './components/PlayerSetup';
 import GameOverScreen from './components/GameOverScreen';
+import PresentationGuide from './components/PresentationGuide';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
@@ -48,6 +49,10 @@ function App() {
     setAppState('store');
   };
 
+  const handleGuideOpen = () => {
+    setAppState('guide');
+  };
+
   const handlePlayerSetupComplete = (
     players: Player[],
     category: string,
@@ -77,7 +82,11 @@ function App() {
   }
 
   if (appState === 'game-selection') {
-    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} />;
+    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} />;
+  }
+
+  if (appState === 'guide') {
+    return <PresentationGuide onBack={handleBackToGameSelection} />;
   }
 
   if (appState === 'store') {

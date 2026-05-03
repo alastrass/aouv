@@ -1,13 +1,14 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen } from 'lucide-react';
 import { GameType } from '../types';
 
 interface GameSelectionProps {
   onGameSelect: (gameType: GameType) => void;
   onStoreOpen?: () => void;
+  onGuideOpen?: () => void;
 }
 
-const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen }) => {
+const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen }) => {
   const allGames = [
     {
       id: 'truth-or-dare' as GameType,
@@ -94,16 +95,26 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
           </div>
         </div>
 
-        {/* Premium Store Button */}
-        <div className="text-center mb-8">
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
           <button
             onClick={onStoreOpen}
-            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mx-auto mobile-button touch-action-none"
+            className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
           >
             <ShoppingCart className="w-6 h-6" />
             <div className="text-left">
               <div className="text-lg">Boutique Premium</div>
               <div className="text-sm opacity-90">Débloquez du contenu exclusif</div>
+            </div>
+          </button>
+          <button
+            onClick={onGuideOpen}
+            className="bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
+          >
+            <BookOpen className="w-5 h-5 text-amber-400" />
+            <div className="text-left">
+              <div className="text-base">Guide</div>
+              <div className="text-xs opacity-75">Découvrir l'application</div>
             </div>
           </button>
         </div>

@@ -8,6 +8,7 @@ export type AppState =
   | 'puzzle'
   | 'stop-tergiverser'
   | 'store'
+  | 'guide'
   | 'game-over';
 
 export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser';
