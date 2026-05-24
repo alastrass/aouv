@@ -33,6 +33,17 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
     }
     ,
     {
+      id: 'roleplay-matches' as GameType,
+      title: 'Fantasmes & Roles',
+      description: 'Selectionnez vos envies chacun de votre cote, revelez uniquement les matches, puis lancez un scenario de jeu de role adulte et consentant.',
+      icon: Sparkles,
+      color: 'from-fuchsia-600 to-pink-600',
+      borderColor: 'border-fuchsia-500/30',
+      available: true,
+      players: '2 joueurs',
+      duration: '15-25 min'
+    },
+    {
       id: 'karma-sutra' as GameType,
       title: 'Karma ? Sutra !',
       description: 'Explorez l\'art de l\'amour avec un guide chronométré des positions du Kamasutra. Rotation automatique et signaux audio pour une expérience immersive.',
@@ -56,9 +67,7 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
     }
   ];
 
-  // TEMPORARY: Show only Truth or Dare game
-  // To restore all games, change this back to allGames
-  const games = allGames.filter(game => game.id === 'truth-or-dare');
+  const games = allGames.filter(game => game.id === 'truth-or-dare' || game.id === 'roleplay-matches');
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4 py-8 safe-area-inset">
       <div className="max-w-4xl mx-auto">
