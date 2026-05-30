@@ -1,14 +1,15 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap } from 'lucide-react';
 import { GameType } from '../types';
 
 interface GameSelectionProps {
   onGameSelect: (gameType: GameType) => void;
   onStoreOpen?: () => void;
   onGuideOpen?: () => void;
+  onClassicOpen?: () => void;
 }
 
-const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen }) => {
+const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen }) => {
   const allGames = [
     {
       id: 'truth-or-dare' as GameType,
@@ -116,6 +117,43 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
               <div className="text-base">Guide</div>
               <div className="text-xs opacity-75">Découvrir l'application</div>
             </div>
+          </button>
+        </div>
+
+        {/* Classic Mode – featured card */}
+        <div
+          className="relative bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border-2 border-slate-600/50 shadow-2xl hover:scale-[1.02] hover:shadow-3xl cursor-pointer transition-all duration-300 mb-8"
+          onClick={onClassicOpen}
+        >
+          <div className="flex items-start gap-5">
+            <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-slate-600 to-slate-700 flex items-center justify-center border border-slate-500/50 shadow-inner">
+              <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-amber-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">Mode Classique</h2>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">NOUVEAU</span>
+              </div>
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">
+                Le vrai Action ou Vérité multi-joueurs avec 4 niveaux de piment — Soft, Hot, Hard et Extrême. Les joueurs peuvent soumettre des défis secrets approuvés à la majorité en cours de partie.
+              </p>
+              <div className="flex items-center gap-4 text-xs text-slate-400 mb-5">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-400 rounded-full"></span>2–8 joueurs</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-amber-400 rounded-full"></span>Illimité</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-emerald-400 rounded-full"></span>Gratuit</span>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {(['Soft', 'Hot', 'Hard', 'Extrême'] as const).map(lvl => (
+                  <span key={lvl} className="text-xs px-2.5 py-1 rounded-full bg-slate-700 text-slate-300 border border-slate-600">
+                    {lvl}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <button className="mt-5 w-full bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg flex items-center justify-center gap-3 mobile-button touch-action-none border border-slate-500/50">
+            <Play className="w-5 h-5 text-amber-400" />
+            Jouer maintenant
           </button>
         </div>
 

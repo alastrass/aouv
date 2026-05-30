@@ -13,6 +13,7 @@ import PWAInstallPrompt from './components/PWAInstallPrompt';
 import PlayerSetup from './components/PlayerSetup';
 import GameOverScreen from './components/GameOverScreen';
 import PresentationGuide from './components/PresentationGuide';
+import ClassicGame from './components/ClassicGame';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
@@ -43,6 +44,10 @@ function App() {
     setIsAgeVerified(false);
     setCurrentGame(null);
     setAppState('welcome');
+  };
+
+  const handleClassicOpen = () => {
+    setAppState('classic');
   };
 
   const handleStoreOpen = () => {
@@ -82,7 +87,7 @@ function App() {
   }
 
   if (appState === 'game-selection') {
-    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} />;
+    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} />;
   }
 
   if (appState === 'guide') {
@@ -107,6 +112,10 @@ function App() {
 
   if (appState === 'puzzle') {
     return <PuzzleGame onBack={handleBackToGameSelection} />;
+  }
+
+  if (appState === 'classic') {
+    return <ClassicGame onBack={handleBackToGameSelection} />;
   }
 
   if (appState === 'stop-tergiverser') {

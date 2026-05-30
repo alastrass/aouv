@@ -7,6 +7,7 @@ export type AppState =
   | 'karma-sutra'
   | 'puzzle'
   | 'stop-tergiverser'
+  | 'classic'
   | 'store'
   | 'guide'
   | 'game-over';
@@ -94,6 +95,39 @@ export interface PuzzlePiece {
   currentX: number;
   currentY: number;
   isPlaced: boolean;
+}
+
+// ── Classic Mode ───────────────────────────────────────────────────────────────
+
+export type ClassicDifficulty = 'soft' | 'hot' | 'hard' | 'extreme';
+
+export type ClassicGamePhase =
+  | 'setup'       // player names + difficulty
+  | 'pick'        // active player picks truth or dare
+  | 'challenge'   // challenge displayed
+  | 'submit'      // any player submits a custom challenge
+  | 'vote';       // others vote to approve/reject submitted challenge
+
+export interface ClassicChallenge {
+  id: number;
+  type: 'truth' | 'dare';
+  difficulty: ClassicDifficulty;
+  text: string;
+  isCustom?: boolean;
+  submittedBy?: number; // player id
+}
+
+export interface ClassicPlayer {
+  id: number;
+  name: string;
+  avatar: string; // emoji
+  score: number;
+}
+
+export interface PendingSubmission {
+  challenge: ClassicChallenge;
+  submittedByPlayerId: number;
+  votes: Record<number, 'approve' | 'reject'>; // playerId → vote
 }
 
 export interface PuzzleSession {
