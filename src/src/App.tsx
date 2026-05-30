@@ -14,6 +14,7 @@ import PlayerSetup from './components/PlayerSetup';
 import GameOverScreen from './components/GameOverScreen';
 import PresentationGuide from './components/PresentationGuide';
 import ClassicGame from './components/ClassicGame';
+import CoupleGame from './components/CoupleGame';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
@@ -48,6 +49,10 @@ function App() {
 
   const handleClassicOpen = () => {
     setAppState('classic');
+  };
+
+  const handleCoupleOpen = () => {
+    setAppState('couple');
   };
 
   const handleStoreOpen = () => {
@@ -87,7 +92,7 @@ function App() {
   }
 
   if (appState === 'game-selection') {
-    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} />;
+    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} />;
   }
 
   if (appState === 'guide') {
@@ -116,6 +121,10 @@ function App() {
 
   if (appState === 'classic') {
     return <ClassicGame onBack={handleBackToGameSelection} />;
+  }
+
+  if (appState === 'couple') {
+    return <CoupleGame onBack={handleBackToGameSelection} />;
   }
 
   if (appState === 'stop-tergiverser') {

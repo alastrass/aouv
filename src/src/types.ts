@@ -8,6 +8,7 @@ export type AppState =
   | 'puzzle'
   | 'stop-tergiverser'
   | 'classic'
+  | 'couple'
   | 'store'
   | 'guide'
   | 'game-over';
@@ -128,6 +129,37 @@ export interface PendingSubmission {
   challenge: ClassicChallenge;
   submittedByPlayerId: number;
   votes: Record<number, 'approve' | 'reject'>; // playerId → vote
+}
+
+// ── Couple Mode – Fantasmes sous couverture ────────────────────────────────────
+
+export type CoupleGamePhase =
+  | 'setup'          // player names
+  | 'fantasy-input'  // each player enters fantasies secretly (one device, turn by turn)
+  | 'ready'          // both players done, ready to reveal
+  | 'voting'         // swipe through the merged deck
+  | 'match'          // both validated — show match animation
+  | 'results';       // end of deck — show all matches
+
+export interface FantasyCard {
+  id: string;
+  text: string;
+  isUserSubmitted: boolean; // false = system card
+  // Author is deliberately NOT stored to keep submissions anonymous
+}
+
+export interface CoupleGameState {
+  player1Name: string;
+  player2Name: string;
+  deck: FantasyCard[];
+  currentIndex: number;
+  // votes[cardId] stores which players have validated (1 and/or 2)
+  votes: Record<string, number[]>;
+  matches: FantasyCard[];
+  // Tracks whose secret input phase it is (1 or 2)
+  inputTurn: 1 | 2;
+  player1Done: boolean;
+  player2Done: boolean;
 }
 
 export interface PuzzleSession {

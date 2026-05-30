@@ -7,9 +7,10 @@ interface GameSelectionProps {
   onStoreOpen?: () => void;
   onGuideOpen?: () => void;
   onClassicOpen?: () => void;
+  onCoupleOpen?: () => void;
 }
 
-const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen }) => {
+const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen }) => {
   const allGames = [
     {
       id: 'truth-or-dare' as GameType,
@@ -153,6 +154,36 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
           </div>
           <button className="mt-5 w-full bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-500 hover:to-slate-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg flex items-center justify-center gap-3 mobile-button touch-action-none border border-slate-500/50">
             <Play className="w-5 h-5 text-amber-400" />
+            Jouer maintenant
+          </button>
+        </div>
+
+        {/* Couple Mode – featured card */}
+        <div
+          className="relative bg-gradient-to-br from-rose-950/40 to-slate-900/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border-2 border-rose-700/40 shadow-2xl hover:scale-[1.02] hover:shadow-3xl cursor-pointer transition-all duration-300 mb-6"
+          onClick={onCoupleOpen}
+        >
+          <div className="flex items-start gap-5">
+            <div className="flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-br from-rose-600 to-pink-700 flex items-center justify-center border border-rose-500/40 shadow-inner">
+              <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-2 flex-wrap">
+                <h2 className="text-2xl sm:text-3xl font-bold text-white">Mode Couple</h2>
+                <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30">NOUVEAU</span>
+              </div>
+              <p className="text-rose-100/80 text-sm sm:text-base leading-relaxed mb-4">
+                Fantasmes sous couverture. Chacun saisit ses désirs en secret, l'application les mélange anonymement et vous votez ensemble. Un match s'affiche uniquement si vous validez tous les deux !
+              </p>
+              <div className="flex items-center gap-4 text-xs text-rose-300/70 mb-5">
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-rose-400 rounded-full"></span>2 joueurs</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-rose-400 rounded-full"></span>Votes anonymes</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 bg-emerald-400 rounded-full"></span>Gratuit</span>
+              </div>
+            </div>
+          </div>
+          <button className="mt-2 w-full bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg flex items-center justify-center gap-3 mobile-button touch-action-none">
+            <Play className="w-5 h-5" />
             Jouer maintenant
           </button>
         </div>
