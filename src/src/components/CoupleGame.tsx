@@ -9,7 +9,6 @@ import { systemFantasies } from '../data/fantasies';
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'couple_gameState';
-// Ratio: 1 user fantasy for every 2 system proposals
 const SYSTEM_PER_USER = 2;
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -30,7 +29,6 @@ function buildDeck(userTexts: string[]): FantasyCard[] {
     isUserSubmitted: true,
   }));
 
-  // Pick (userCards.length * SYSTEM_PER_USER) system cards, shuffled
   const systemPool = shuffle(systemFantasies);
   const systemCount = Math.max(userCards.length * SYSTEM_PER_USER, 10);
   const systemCards: FantasyCard[] = systemPool.slice(0, systemCount).map(s => ({
@@ -39,7 +37,6 @@ function buildDeck(userTexts: string[]): FantasyCard[] {
     isUserSubmitted: false,
   }));
 
-  // Interleave: for every user card, insert 2 system cards around it
   const deck: FantasyCard[] = [];
   let sIdx = 0;
   for (const uc of userCards) {
@@ -48,12 +45,9 @@ function buildDeck(userTexts: string[]): FantasyCard[] {
     }
     deck.push(uc);
   }
-  // Append remaining system cards
-  while (sIdx < systemCards.length) {
-    deck.push(systemCards[sIdx++]);
-  }
+  while (sIdx < systemCards.length) deck.push(systemCards[sIdx++]);
 
-  return shuffle(deck); // final shuffle to fully anonymise user cards
+  return shuffle(deck);
 }
 
 // ── Props ─────────────────────────────────────────────────────────────────────
@@ -62,36 +56,67 @@ interface CoupleGameProps {
   onBack: () => void;
 }
 
+// ── Floating hearts for match burst ──────────────────────────────────────────
+
+const HEART_EMOJIS = ['❤️', '💕', '✨', '💫', '🔥', '💖', '💗'];
+
+interface FloatHeart { id: number; emoji: string; x: number; delay: number; size: number }
+
+const FloatingHearts: React.FC = () => {
+  const hearts: FloatHeart[] = Array.from({ length: 18 }, (_, i) => ({
+    id: i,
+    emoji: HEART_EMOJIS[i % HEART_EMOJIS.length],
+    x: 5 + (i * 5.5) % 90,
+    delay: (i * 0.12) % 1.2,
+    size: 18 + (i * 7) % 22,
+  }));
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {hearts.map(h => (
+        <span
+          key={h.id}
+          className="absolute animate-float-up"
+          style={{
+            left: `${h.x}%`,
+            bottom: '10%',
+            fontSize: `${h.size}px`,
+            animationDelay: `${h.delay}s`,
+            animationDuration: `${1.2 + h.delay}s`,
+          }}
+        >
+          {h.emoji}
+        </span>
+      ))}
+    </div>
+  );
+};
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
   const [phase, setPhase] = useState<CoupleGamePhase>('setup');
 
-  // Setup
   const [p1Name, setP1Name] = useState('');
   const [p2Name, setP2Name] = useState('');
 
-  // Secret fantasy input (per player, device-passed)
   const [inputTurn, setInputTurn] = useState<1 | 2>(1);
   const [p1Fantasies, setP1Fantasies] = useState<string[]>([]);
   const [p2Fantasies, setP2Fantasies] = useState<string[]>([]);
   const [currentInput, setCurrentInput] = useState<string[]>(['']);
-  const [showInput, setShowInput] = useState(false); // toggled so other player can't peek
+  const [showInput, setShowInput] = useState(false);
 
-  // Game state
   const [gameState, setGameState] = useState<CoupleGameState | null>(null);
 
-  // Voting — which player is currently voting (on a shared device, turn by turn per card)
-  const [votingTurn, setVotingTurn] = useState<1 | 2>(1);
-  const [p1Vote, setP1Vote] = useState<'validate' | 'pass' | null>(null);
-  const [p2Vote, setP2Vote] = useState<'validate' | 'pass' | null>(null);
   const [votePhase, setVotePhase] = useState<'p1' | 'p2' | 'reveal'>('p1');
+  const [p1Vote, setP1Vote] = useState<'validate' | 'pass' | null>(null);
 
-  // Match animation
+  // Card animation: we track the current card key to re-trigger slide-in
+  const [cardKey, setCardKey] = useState(0);
+  const [cardExiting, setCardExiting] = useState(false);
+
   const [showMatchAnim, setShowMatchAnim] = useState(false);
   const [matchAnimCard, setMatchAnimCard] = useState<FantasyCard | null>(null);
-
-  // Particle refs for animation
   const matchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ── Persist ────────────────────────────────────────────────────────────────
@@ -117,7 +142,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
   const clearPersist = () => localStorage.removeItem(STORAGE_KEY);
 
-  // ── Setup → Fantasy input ──────────────────────────────────────────────────
+  // ── Setup ──────────────────────────────────────────────────────────────────
 
   const startSetup = () => {
     if (!p1Name.trim() || !p2Name.trim()) return;
@@ -127,17 +152,13 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     setPhase('fantasy-input');
   };
 
-  // Fantasy input helpers
   const addLine = () => setCurrentInput(prev => [...prev, '']);
-
   const removeLine = (i: number) => {
     if (currentInput.length <= 1) return;
     setCurrentInput(prev => prev.filter((_, idx) => idx !== i));
   };
-
-  const updateLine = (i: number, val: string) => {
+  const updateLine = (i: number, val: string) =>
     setCurrentInput(prev => prev.map((v, idx) => idx === i ? val : v));
-  };
 
   const confirmPlayerInput = () => {
     const valid = currentInput.map(s => s.trim()).filter(Boolean);
@@ -154,12 +175,10 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
   const currentPlayerName = inputTurn === 1 ? p1Name.trim() : p2Name.trim();
 
-  // ── Ready → Build deck → Voting ───────────────────────────────────────────
+  // ── Start voting ───────────────────────────────────────────────────────────
 
   const startVoting = () => {
-    const allUserTexts = [...p1Fantasies, ...p2Fantasies];
-    const deck = buildDeck(allUserTexts);
-
+    const deck = buildDeck([...p1Fantasies, ...p2Fantasies]);
     const state: CoupleGameState = {
       player1Name: p1Name.trim(),
       player2Name: p2Name.trim(),
@@ -173,14 +192,13 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     };
     setGameState(state);
     persist(state);
-    setVotingTurn(1);
     setVotePhase('p1');
     setP1Vote(null);
-    setP2Vote(null);
+    setCardKey(0);
     setPhase('voting');
   };
 
-  // ── Voting logic ──────────────────────────────────────────────────────────
+  // ── Voting ─────────────────────────────────────────────────────────────────
 
   const castVote = (vote: 'validate' | 'pass') => {
     if (!gameState) return;
@@ -189,20 +207,16 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     if (votePhase === 'p1') {
       setP1Vote(vote);
       setVotePhase('p2');
-    } else if (votePhase === 'p2') {
-      setP2Vote(vote);
-      setVotePhase('reveal');
-
+    } else {
+      // p2 voted — resolve
       const bothValidated = p1Vote === 'validate' && vote === 'validate';
 
       if (bothValidated) {
-        // It's a match!
         const updatedMatches = [...gameState.matches, card];
-        const updatedVotes = { ...gameState.votes, [card.id]: [1, 2] };
         const updatedState: CoupleGameState = {
           ...gameState,
           matches: updatedMatches,
-          votes: updatedVotes,
+          votes: { ...gameState.votes, [card.id]: [1, 2] },
         };
         setGameState(updatedState);
         persist(updatedState);
@@ -212,32 +226,37 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
         if (matchTimerRef.current) clearTimeout(matchTimerRef.current);
         matchTimerRef.current = setTimeout(() => {
           setShowMatchAnim(false);
-          advanceCard(updatedState);
-        }, 3200);
+          triggerCardTransition(updatedState);
+        }, 3400);
+      } else {
+        setVotePhase('reveal');
       }
-      // If not a match, we wait in 'reveal' state for the "Suivant" button
     }
   };
 
-  const advanceCard = (state: CoupleGameState) => {
-    const nextIndex = state.currentIndex + 1;
-    if (nextIndex >= state.deck.length) {
-      clearPersist();
-      setGameState({ ...state, currentIndex: nextIndex });
-      setPhase('results');
-      return;
-    }
-    const updated = { ...state, currentIndex: nextIndex };
-    setGameState(updated);
-    persist(updated);
-    setVotePhase('p1');
-    setP1Vote(null);
-    setP2Vote(null);
+  const triggerCardTransition = (state: CoupleGameState) => {
+    setCardExiting(true);
+    setTimeout(() => {
+      setCardExiting(false);
+      const nextIndex = state.currentIndex + 1;
+      if (nextIndex >= state.deck.length) {
+        clearPersist();
+        setGameState({ ...state, currentIndex: nextIndex });
+        setPhase('results');
+        return;
+      }
+      const updated = { ...state, currentIndex: nextIndex };
+      setGameState(updated);
+      persist(updated);
+      setCardKey(k => k + 1);
+      setVotePhase('p1');
+      setP1Vote(null);
+    }, 240);
   };
 
   const handleNextCard = () => {
     if (!gameState) return;
-    advanceCard(gameState);
+    triggerCardTransition(gameState);
   };
 
   const resetGame = () => {
@@ -252,11 +271,12 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     setGameState(null);
     setVotePhase('p1');
     setP1Vote(null);
-    setP2Vote(null);
     setShowMatchAnim(false);
+    setCardKey(0);
+    setCardExiting(false);
   };
 
-  // ── Common header ─────────────────────────────────────────────────────────
+  // ── Common header ──────────────────────────────────────────────────────────
 
   const Header = ({ subtitle }: { subtitle?: string }) => (
     <div className="flex items-center gap-3 px-4 pt-6 pb-4 flex-shrink-0">
@@ -274,58 +294,43 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     </div>
   );
 
-  // ════════════════════════════════════════════════════════════════════════════
-  // RENDER
-  // ════════════════════════════════════════════════════════════════════════════
-
-  // ── SETUP ─────────────────────────────────────────────────────────────────
+  // ── SETUP ──────────────────────────────────────────────────────────────────
   if (phase === 'setup') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-rose-950/30 to-slate-900 flex flex-col safe-area-inset">
         <Header subtitle="Mode Couple" />
         <div className="flex-1 overflow-y-auto px-4 pb-8">
           <div className="max-w-md mx-auto space-y-6">
-
-            {/* Hero description */}
-            <div className="bg-rose-900/20 border border-rose-500/30 rounded-2xl p-5 text-center">
+            <div className="bg-rose-900/20 border border-rose-500/30 rounded-2xl p-5 text-center animate-slide-up">
               <div className="flex justify-center mb-3">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg animate-gentle-float">
                   <Lock className="w-7 h-7 text-white" />
                 </div>
               </div>
               <h2 className="text-white font-bold text-lg mb-2">Vos secrets restent secrets</h2>
               <p className="text-rose-200/80 text-sm leading-relaxed">
-                Chaque joueur saisit ses fantasmes en privé. L'application les mélange avec ses propres propositions et vous les soumet anonymement, un par un. Un match se déclenche uniquement si vous validez tous les deux !
+                Chaque joueur saisit ses fantasmes en privé. L'application les mélange avec ses propres propositions et vous les soumet anonymement, un par un.
               </p>
             </div>
 
-            {/* Player names */}
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50 space-y-4">
               <h3 className="text-slate-300 text-sm font-semibold uppercase tracking-widest">Joueurs</h3>
-              <div className="space-y-3">
-                <div>
-                  <label className="text-slate-400 text-xs block mb-1.5">Joueur 1</label>
+              {[
+                { label: 'Joueur 1', val: p1Name, set: setP1Name },
+                { label: 'Joueur 2', val: p2Name, set: setP2Name },
+              ].map(({ label, val, set }) => (
+                <div key={label}>
+                  <label className="text-slate-400 text-xs block mb-1.5">{label}</label>
                   <input
                     type="text"
-                    value={p1Name}
-                    onChange={e => setP1Name(e.target.value)}
+                    value={val}
+                    onChange={e => set(e.target.value)}
                     placeholder="Prénom..."
                     maxLength={20}
                     className="w-full bg-slate-700/60 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500/60 transition-colors text-sm"
                   />
                 </div>
-                <div>
-                  <label className="text-slate-400 text-xs block mb-1.5">Joueur 2</label>
-                  <input
-                    type="text"
-                    value={p2Name}
-                    onChange={e => setP2Name(e.target.value)}
-                    placeholder="Prénom..."
-                    maxLength={20}
-                    className="w-full bg-slate-700/60 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-rose-500/60 transition-colors text-sm"
-                  />
-                </div>
-              </div>
+              ))}
             </div>
 
             <button
@@ -345,7 +350,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     );
   }
 
-  // ── FANTASY INPUT ─────────────────────────────────────────────────────────
+  // ── FANTASY INPUT ──────────────────────────────────────────────────────────
   if (phase === 'fantasy-input') {
     const isFirstTurn = inputTurn === 1;
     return (
@@ -353,33 +358,20 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
         <Header subtitle={`Saisie secrète — ${currentPlayerName}`} />
         <div className="flex-1 overflow-y-auto px-4 pb-8">
           <div className="max-w-md mx-auto space-y-5">
-
-            {/* Hand-off notice for second player */}
             {!isFirstTurn && (
-              <div className="bg-amber-900/30 border border-amber-500/40 rounded-2xl p-4 text-center">
-                <p className="text-amber-200 text-sm font-medium">
-                  Passez l'appareil à <span className="font-bold text-white">{p2Name}</span>
-                </p>
-                <p className="text-amber-300/70 text-xs mt-1">
-                  {p1Name} a terminé. La saisie est privée.
-                </p>
+              <div className="bg-amber-900/30 border border-amber-500/40 rounded-2xl p-4 text-center animate-slide-up">
+                <p className="text-amber-200 text-sm font-medium">Passez l'appareil à <span className="font-bold text-white">{p2Name}</span></p>
+                <p className="text-amber-300/70 text-xs mt-1">{p1Name} a terminé. La saisie est privée.</p>
               </div>
             )}
 
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-white font-semibold">
-                    {currentPlayerName}, vos fantasmes
-                  </h3>
-                  <p className="text-slate-400 text-xs mt-0.5">
-                    L'autre joueur ne verra pas vos saisies
-                  </p>
+                  <h3 className="text-white font-semibold">{currentPlayerName}, vos fantasmes</h3>
+                  <p className="text-slate-400 text-xs mt-0.5">L'autre joueur ne verra pas vos saisies</p>
                 </div>
-                <button
-                  onClick={() => setShowInput(v => !v)}
-                  className="p-2 rounded-xl bg-slate-700 text-slate-400 mobile-button touch-action-none"
-                >
+                <button onClick={() => setShowInput(v => !v)} className="p-2 rounded-xl bg-slate-700 text-slate-400 mobile-button touch-action-none">
                   {showInput ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
@@ -396,10 +388,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                       autoComplete="off"
                     />
                     {currentInput.length > 1 && (
-                      <button
-                        onClick={() => removeLine(i)}
-                        className="p-2.5 rounded-xl bg-rose-900/40 text-rose-400 hover:bg-rose-900/60 transition-colors mobile-button touch-action-none"
-                      >
+                      <button onClick={() => removeLine(i)} className="p-2.5 rounded-xl bg-rose-900/40 text-rose-400 hover:bg-rose-900/60 transition-colors mobile-button touch-action-none">
                         <Trash2 className="w-4 h-4" />
                       </button>
                     )}
@@ -408,19 +397,15 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
               </div>
 
               {currentInput.length < 8 && (
-                <button
-                  onClick={addLine}
-                  className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-colors text-sm mobile-button touch-action-none"
-                >
-                  <Plus className="w-4 h-4" />
-                  Ajouter un fantasme
+                <button onClick={addLine} className="mt-3 w-full flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-dashed border-slate-600 text-slate-400 hover:border-slate-500 hover:text-slate-300 transition-colors text-sm mobile-button touch-action-none">
+                  <Plus className="w-4 h-4" /> Ajouter un fantasme
                 </button>
               )}
             </div>
 
             <div className="bg-slate-800/40 rounded-xl p-4 border border-slate-700/30">
               <p className="text-slate-400 text-xs leading-relaxed text-center">
-                Vous pouvez ne rien saisir — l'application a déjà plein de propositions. Vos saisies seront mélangées de façon anonyme.
+                Vous pouvez ne rien saisir — l'application a déjà plein de propositions.
               </p>
             </div>
 
@@ -437,22 +422,16 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     );
   }
 
-  // ── READY SCREEN ──────────────────────────────────────────────────────────
+  // ── READY ──────────────────────────────────────────────────────────────────
   if (phase === 'ready') {
-    const totalCards = Math.max(
-      (p1Fantasies.length + p2Fantasies.length) * SYSTEM_PER_USER + p1Fantasies.length + p2Fantasies.length,
-      10
-    );
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-rose-950/30 to-slate-900 flex flex-col safe-area-inset">
         <Header />
         <div className="flex-1 flex flex-col justify-center px-4 pb-8">
           <div className="max-w-md mx-auto w-full space-y-6 text-center">
-
             <div className="flex justify-center">
               <div className="relative">
-                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-2xl">
+                <div className="w-24 h-24 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-2xl animate-gentle-float">
                   <Sparkles className="w-12 h-12 text-white" />
                 </div>
                 <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
@@ -460,28 +439,30 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                 </div>
               </div>
             </div>
-
             <div>
               <h2 className="text-2xl font-bold text-white mb-2">Tout est prêt !</h2>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Vos fantasmes ont été mélangés avec les propositions de l'application.
-                Vous allez voter ensemble sur chaque carte, à tour de rôle, sans connaître l'origine des propositions.
+                Vos fantasmes ont été mélangés anonymement avec les propositions de l'application.
               </p>
             </div>
-
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50 text-left space-y-3">
-              <Rule icon="🔒" text="Les votes sont anonymes — l'autre ne sait pas ce que vous avez saisi." />
-              <Rule icon="💡" text={`Chaque joueur vote séparément sur chaque carte (~${Math.min(totalCards, 45)} cartes).`} />
-              <Rule icon="❤️" text="Si vous validez tous les deux → Match ! La carte est révélée en commun." />
-              <Rule icon="➡️" text="Si un seul valide → Pas de match, on passe à la suivante sans révéler les votes." />
+              {[
+                { icon: '🔒', text: 'Les votes sont anonymes — l\'autre ne sait pas ce que vous avez saisi.' },
+                { icon: '💡', text: 'Chaque joueur vote séparément sur chaque carte, à tour de rôle.' },
+                { icon: '❤️', text: 'Si vous validez tous les deux → Match animé !' },
+                { icon: '➡️', text: 'Si un seul valide → on passe sans révéler les votes.' },
+              ].map(({ icon, text }) => (
+                <div key={text} className="flex items-start gap-3">
+                  <span className="text-lg flex-shrink-0 leading-tight mt-0.5">{icon}</span>
+                  <p className="text-slate-300 text-sm leading-relaxed">{text}</p>
+                </div>
+              ))}
             </div>
-
             <button
               onClick={startVoting}
               className="w-full py-5 rounded-2xl font-bold text-xl bg-gradient-to-r from-rose-600 to-pink-600 text-white hover:opacity-90 active:scale-95 transition-all duration-200 shadow-xl mobile-button touch-action-none flex items-center justify-center gap-3"
             >
-              <Heart className="w-6 h-6" />
-              Lancer les votes
+              <Heart className="w-6 h-6" /> Lancer les votes
             </button>
           </div>
         </div>
@@ -489,66 +470,31 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     );
   }
 
-  // ── VOTING ────────────────────────────────────────────────────────────────
+  // ── VOTING ─────────────────────────────────────────────────────────────────
   if (phase === 'voting' && gameState) {
     const card = gameState.deck[gameState.currentIndex];
-    if (!card) {
-      // Deck exhausted
-      setPhase('results');
-      return null;
-    }
+    if (!card) { setPhase('results'); return null; }
 
     const progress = gameState.currentIndex / gameState.deck.length;
     const matchCount = gameState.matches.length;
-
     const activeVoterName = votePhase === 'p1' ? gameState.player1Name : gameState.player2Name;
 
-    // Match animation overlay
+    // Match overlay
     const MatchOverlay = () => (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-        <div className="relative text-center px-8">
-          {/* Animated hearts */}
-          <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            {Array.from({ length: 12 }).map((_, i) => (
-              <div
-                key={i}
-                className="absolute text-2xl animate-bounce"
-                style={{
-                  left: `${Math.random() * 90}%`,
-                  top: `${Math.random() * 80}%`,
-                  animationDelay: `${Math.random() * 0.8}s`,
-                  animationDuration: `${0.6 + Math.random() * 0.6}s`,
-                  opacity: 0.7 + Math.random() * 0.3,
-                }}
-              >
-                {['❤️', '💕', '✨', '💫', '🔥'][i % 5]}
-              </div>
-            ))}
-          </div>
-
-          <div
-            className="relative bg-gradient-to-br from-rose-600 to-pink-700 rounded-3xl p-8 shadow-2xl border border-rose-400/40 max-w-sm mx-auto"
-            style={{ animation: 'matchPop 0.4s cubic-bezier(0.34,1.56,0.64,1) both' }}
-          >
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm">
+        <div className="relative w-full h-full flex items-center justify-center">
+          <FloatingHearts />
+          <div className="relative z-10 bg-gradient-to-br from-rose-600 to-pink-700 rounded-3xl p-8 shadow-2xl border border-rose-400/40 max-w-sm mx-4 animate-match-burst text-center">
             <div className="text-6xl mb-4">❤️</div>
-            <h2 className="text-3xl font-black text-white mb-2">Match !</h2>
+            <h2 className="text-4xl font-black text-white mb-2">Match !</h2>
             <p className="text-rose-100 text-sm mb-5 leading-relaxed font-medium">
               Vous avez tous les deux validé cette proposition !
             </p>
             <div className="bg-white/15 rounded-2xl p-4">
-              <p className="text-white text-base font-medium leading-relaxed italic">
-                "{matchAnimCard?.text}"
-              </p>
+              <p className="text-white text-base font-medium leading-relaxed italic">"{matchAnimCard?.text}"</p>
             </div>
           </div>
         </div>
-
-        <style>{`
-          @keyframes matchPop {
-            from { transform: scale(0.5); opacity: 0; }
-            to   { transform: scale(1);   opacity: 1; }
-          }
-        `}</style>
       </div>
     );
 
@@ -560,7 +506,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
         {/* Progress bar */}
         <div className="px-4 mb-2">
-          <div className="h-1 bg-slate-700 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-slate-700 rounded-full overflow-hidden">
             <div
               className="h-full bg-gradient-to-r from-rose-500 to-pink-500 rounded-full transition-all duration-500"
               style={{ width: `${progress * 100}%` }}
@@ -571,8 +517,13 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
         <div className="flex-1 flex flex-col justify-center px-4 pb-6">
           <div className="max-w-md mx-auto w-full space-y-5">
 
-            {/* Fantasy card */}
-            <div className="bg-slate-800/80 rounded-2xl p-7 border border-slate-600/50 shadow-2xl min-h-[160px] flex flex-col justify-center">
+            {/* Fantasy card — re-animated on each new card */}
+            <div
+              key={cardKey}
+              className={`bg-slate-800/80 rounded-2xl p-7 border border-slate-600/50 shadow-2xl min-h-[160px] flex flex-col justify-center ${
+                cardExiting ? 'animate-card-out' : 'animate-card-in'
+              }`}
+            >
               <p className="text-white text-lg sm:text-xl leading-relaxed font-medium text-center">
                 {card.text}
               </p>
@@ -586,7 +537,6 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                   <p className="text-white font-bold text-xl">{activeVoterName}</p>
                   <p className="text-slate-500 text-xs mt-0.5">Votez sans montrer votre écran</p>
                 </div>
-
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     onClick={() => castVote('validate')}
@@ -603,24 +553,21 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                     <span className="text-base">Passer</span>
                   </button>
                 </div>
-
-                {/* Vote progress indicator (anonymous) */}
+                {/* Anonymous vote progress dots */}
                 <div className="flex justify-center gap-3 pt-1">
-                  <div className={`w-2.5 h-2.5 rounded-full transition-colors ${votePhase === 'p2' ? 'bg-rose-400' : 'bg-slate-600'}`} />
-                  <div className={`w-2.5 h-2.5 rounded-full transition-colors ${votePhase === 'p1' ? 'bg-slate-600' : 'bg-slate-600'}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${votePhase === 'p2' ? 'bg-rose-400 scale-125' : 'bg-slate-600'}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${votePhase === 'p1' ? 'bg-rose-400 scale-125' : 'bg-slate-600'}`} />
                 </div>
               </div>
             ) : (
-              /* Reveal — no match, just advance */
-              <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50 text-center space-y-4">
+              <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50 text-center space-y-4 animate-slide-up">
                 <p className="text-slate-400 text-sm">Les deux votes sont enregistrés.</p>
                 <p className="text-slate-500 text-xs">Les résultats individuels restent secrets jusqu'à un match mutuel.</p>
                 <button
                   onClick={handleNextCard}
                   className="w-full py-4 rounded-xl bg-gradient-to-r from-slate-600 to-slate-700 text-white font-semibold flex items-center justify-center gap-2 mobile-button touch-action-none hover:from-slate-500 hover:to-slate-600 transition-all"
                 >
-                  <ChevronRight className="w-5 h-5" />
-                  Carte suivante
+                  <ChevronRight className="w-5 h-5" /> Carte suivante
                 </button>
               </div>
             )}
@@ -630,45 +577,30 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     );
   }
 
-  // ── RESULTS ───────────────────────────────────────────────────────────────
+  // ── RESULTS ────────────────────────────────────────────────────────────────
   if (phase === 'results' && gameState) {
     const matches = gameState.matches;
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-rose-950/30 to-slate-900 flex flex-col safe-area-inset">
         <Header subtitle="Fin de partie" />
         <div className="flex-1 overflow-y-auto px-4 pb-8">
           <div className="max-w-md mx-auto space-y-6">
-
-            {/* Score */}
-            <div className="text-center pt-4">
+            <div className="text-center pt-4 animate-slide-up">
               <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 shadow-2xl mb-4">
                 <span className="text-4xl font-black text-white">{matches.length}</span>
               </div>
               <h2 className="text-2xl font-bold text-white mb-1">
-                {matches.length === 0
-                  ? 'Aucun match cette fois…'
-                  : matches.length === 1
-                  ? '1 match trouvé !'
-                  : `${matches.length} matchs trouvés !`}
+                {matches.length === 0 ? 'Aucun match cette fois…' : matches.length === 1 ? '1 match trouvé !' : `${matches.length} matchs trouvés !`}
               </h2>
-              <p className="text-slate-400 text-sm">
-                {gameState.player1Name} & {gameState.player2Name}
-              </p>
+              <p className="text-slate-400 text-sm">{gameState.player1Name} &amp; {gameState.player2Name}</p>
             </div>
 
-            {/* Match list */}
             {matches.length > 0 && (
               <div className="space-y-3">
                 <h3 className="text-slate-300 text-sm font-semibold uppercase tracking-widest">Vos fantasmes communs</h3>
                 {matches.map((m, i) => (
-                  <div
-                    key={m.id}
-                    className="bg-rose-900/20 rounded-2xl p-4 border border-rose-500/30 flex gap-3"
-                  >
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-sm font-bold text-white">
-                      {i + 1}
-                    </div>
+                  <div key={m.id} className="bg-rose-900/20 rounded-2xl p-4 border border-rose-500/30 flex gap-3 animate-slide-up" style={{ animationDelay: `${i * 0.06}s` }}>
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center text-sm font-bold text-white">{i + 1}</div>
                     <p className="text-white text-sm leading-relaxed flex-1">{m.text}</p>
                   </div>
                 ))}
@@ -687,8 +619,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
               onClick={resetGame}
               className="w-full py-4 rounded-2xl font-bold bg-gradient-to-r from-rose-600 to-pink-600 text-white hover:opacity-90 active:scale-95 transition-all shadow-xl mobile-button touch-action-none flex items-center justify-center gap-2"
             >
-              <Heart className="w-5 h-5" />
-              Rejouer
+              <Heart className="w-5 h-5" /> Rejouer
             </button>
           </div>
         </div>
@@ -698,14 +629,5 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
   return null;
 };
-
-// ── Small helper ──────────────────────────────────────────────────────────────
-
-const Rule: React.FC<{ icon: string; text: string }> = ({ icon, text }) => (
-  <div className="flex items-start gap-3">
-    <span className="text-lg flex-shrink-0 leading-tight mt-0.5">{icon}</span>
-    <p className="text-slate-300 text-sm leading-relaxed">{text}</p>
-  </div>
-);
 
 export default CoupleGame;

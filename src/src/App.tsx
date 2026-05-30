@@ -120,7 +120,7 @@ function App() {
   }
 
   if (appState === 'classic') {
-    return <ClassicGame onBack={handleBackToGameSelection} />;
+    return <ClassicGame onBack={handleBackToGameSelection} onOpenStore={handleStoreOpen} />;
   }
 
   if (appState === 'couple') {
