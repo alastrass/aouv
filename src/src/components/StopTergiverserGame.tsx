@@ -23,6 +23,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [isSpinning, setIsSpinning] = useState(false);
   const [showWheel, setShowWheel] = useState(false);
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
+  const [turnCount, setTurnCount] = useState(0);
 
   useEffect(() => {
     try {
@@ -86,7 +87,10 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
 
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = challenges[category].filter(c => c.type === 'dare');
-    return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
+    if (turnCount >= 2) {
+      return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
+    }
+    return baseChallenges;
   };
 
   const getAvailableChallenges = (): Challenge[] => {
@@ -128,6 +132,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     setCurrentChallenge(null);
     setShowWheel(false);
     setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
+    setTurnCount(prev => prev + 1);
   };
 
   const handleReset = () => {
@@ -137,6 +142,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     setCurrentChallenge(null);
     setCurrentPlayerIndex(0);
     setShowWheel(false);
+    setTurnCount(0);
   };
 
   if (gameState === 'setup') {
@@ -222,6 +228,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                       setCurrentChallenge(null);
                       setShowWheel(false);
                       setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
+                      setTurnCount(prev => prev + 1);
                     }}
                     className="flex items-center justify-center gap-3 px-6 sm:px-8 py-4 bg-red-600 active:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg mobile-button touch-action-none"
                   >

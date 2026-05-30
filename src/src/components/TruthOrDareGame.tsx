@@ -24,6 +24,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
   const [isSpinning, setIsSpinning] = useState(false);
   const [showWheel, setShowWheel] = useState(false);
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
+  const [turnCount, setTurnCount] = useState(0);
 
   // Load data from localStorage
   useEffect(() => {
@@ -89,7 +90,10 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
 
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = challenges[category];
-    return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
+    if (turnCount >= 2) {
+      return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
+    }
+    return baseChallenges;
   };
 
   const getAvailableChallenges = (): Challenge[] => {
@@ -136,6 +140,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
 
     setCurrentChallenge(null);
     setCurrentPlayerIndex((prev) => (prev + 1) % players.length);
+    setTurnCount(prev => prev + 1);
   };
 
   const resetGame = () => {
@@ -143,6 +148,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setUsedChallenges([]);
     setCurrentChallenge(null);
     setCurrentPlayerIndex(0);
+    setTurnCount(0);
   };
 
   const restartCompletely = () => {
@@ -157,6 +163,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setCurrentChallenge(null);
     setUsedChallenges([]);
     setCustomChallenges([]);
+    setTurnCount(0);
   };
 
   if (gameState === 'setup') {
