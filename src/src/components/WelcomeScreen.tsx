@@ -75,7 +75,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
             En continuant, vous confirmez être majeur(e) et consentant(e)
           </p>
           <p className="text-amber-100 text-xs mt-2">
-            Jeu en cours de développement par : Jérôme Joly - 2025
+            Créé avec passion par JaY
           </p>
         </div>
       </div>
