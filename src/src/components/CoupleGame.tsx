@@ -553,10 +553,10 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                     <span className="text-base">Passer</span>
                   </button>
                 </div>
-                {/* Anonymous vote progress dots */}
+                {/* Anonymous vote progress dots — dot 1 = p1 voted, dot 2 = p2 pending */}
                 <div className="flex justify-center gap-3 pt-1">
-                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${votePhase === 'p2' ? 'bg-rose-400 scale-125' : 'bg-slate-600'}`} />
-                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${votePhase === 'p1' ? 'bg-rose-400 scale-125' : 'bg-slate-600'}`} />
+                  <div className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${votePhase !== 'p1' ? 'bg-rose-400 scale-125' : 'bg-slate-600'}`} />
+                  <div className="w-2.5 h-2.5 rounded-full bg-slate-600" />
                 </div>
               </div>
             ) : (
