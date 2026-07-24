@@ -25,9 +25,13 @@ export type KiffeGameState = 'setup' | 'playing' | 'results';
 
 export type KarmaSutraGameState = 'setup' | 'playing' | 'paused';
 
-export type PuzzleGameState = 'setup' | 'playing' | 'completed';
+export type PuzzleGameState = 'session-setup' | 'image-selection' | 'waiting-player' | 'playing' | 'completed';
 
-export type PuzzleDifficulty = 'easy' | 'medium' | 'hard';
+export interface PuzzleDifficulty {
+  gridSize: number;
+  label: string;
+  pieces: number;
+}
 
 export interface Challenge {
   id: number;
@@ -95,7 +99,10 @@ export interface PuzzlePiece {
   correctY: number;
   currentX: number;
   currentY: number;
+  imageData: string;
   isPlaced: boolean;
+  width: number;
+  height: number;
 }
 
 // ── Classic Mode ───────────────────────────────────────────────────────────────
@@ -163,12 +170,14 @@ export interface CoupleGameState {
 }
 
 export interface PuzzleSession {
-  id: string;
-  imageUrl: string;
-  difficulty: PuzzleDifficulty;
+  code: string;
+  creator: { id: string; name: string; connected: boolean };
+  solver?: { id: string; name: string; connected: boolean };
+  originalImage: string;
+  gridSize: number;
   pieces: PuzzlePiece[];
-  state: PuzzleGameState;
-  startTime?: number;
-  endTime?: number;
   isCompleted: boolean;
+  state: 'waiting' | 'playing' | 'completed';
+  startTime: number;
+  endTime?: number;
 }
