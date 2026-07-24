@@ -1,10 +1,12 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { ArrowLeft, Upload, Play, Copy, Check, Home, Users, Trophy, RotateCcw, Puzzle, Image as ImageIcon } from 'lucide-react';
+import React, { useState, useRef, useCallback } from 'react';
+import { ArrowLeft, Upload, Copy, Check, Home, Users, Trophy, RotateCcw, Puzzle, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { PuzzleGameState, PuzzleSession, PuzzlePiece, PuzzleDifficulty } from '../types';
 
 interface PuzzleGameProps {
   onBack: () => void;
 }
+
+const BOARD_SIZE = 300;
 
 const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
   const [gameState, setGameState] = useState<PuzzleGameState>('session-setup');
@@ -16,11 +18,8 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
   const [selectedImage, setSelectedImage] = useState<string>('');
   const [selectedDifficulty, setSelectedDifficulty] = useState<PuzzleDifficulty>({ gridSize: 3, label: 'Facile', pieces: 9 });
   const [copied, setCopied] = useState(false);
-  const [isCreator, setIsCreator] = useState(true);
-  const [draggedPiece, setDraggedPiece] = useState<PuzzlePiece | null>(null);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [selectedPieceId, setSelectedPieceId] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const difficulties: PuzzleDifficulty[] = [
     { gridSize: 3, label: 'Facile', pieces: 9 },
@@ -56,15 +55,15 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
-        
+
         const pieceWidth = Math.floor(img.width / gridSize);
         const pieceHeight = Math.floor(img.height / gridSize);
-        
+
         canvas.width = pieceWidth;
         canvas.height = pieceHeight;
-        
+
         const pieces: PuzzlePiece[] = [];
-        
+
         for (let row = 0; row < gridSize; row++) {
           for (let col = 0; col < gridSize; col++) {
             ctx.clearRect(0, 0, pieceWidth, pieceHeight);
@@ -73,13 +72,13 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               col * pieceWidth, row * pieceHeight, pieceWidth, pieceHeight,
               0, 0, pieceWidth, pieceHeight
             );
-            
+
             pieces.push({
               id: row * gridSize + col,
-              correctX: col * pieceWidth,
-              correctY: row * pieceHeight,
-              currentX: Math.random() * 400,
-              currentY: Math.random() * 400,
+              correctX: col,
+              correctY: row,
+              currentX: 0,
+              currentY: 0,
               imageData: canvas.toDataURL(),
               isPlaced: false,
               width: pieceWidth,
@@ -87,13 +86,12 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
             });
           }
         }
-        
-        // Shuffle pieces
+
         for (let i = pieces.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [pieces[i], pieces[j]] = [pieces[j], pieces[i]];
         }
-        
+
         resolve(pieces);
       };
       img.src = imageData;
@@ -102,10 +100,10 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
 
   const createSession = async () => {
     if (!playerName.trim() || !selectedImage) return;
-    
+
     const code = generateSessionCode();
     const pieces = await createPuzzlePieces(selectedImage, selectedDifficulty.gridSize);
-    
+
     const newSession: PuzzleSession = {
       code,
       creator: {
@@ -120,17 +118,15 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
       state: 'waiting',
       startTime: Date.now()
     };
-    
+
     setSession(newSession);
     setSessionCode(code);
-    setIsCreator(true);
     setGameState('waiting-player');
   };
 
   const joinSession = () => {
     if (!playerName.trim() || !inputCode.trim()) return;
-    
-    // Simulate joining an existing session
+
     const mockSession: PuzzleSession = {
       code: inputCode.trim(),
       creator: {
@@ -143,111 +139,67 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
         name: playerName.trim(),
         connected: true
       },
-      originalImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgZmlsbD0iIzMzNzNkYyIvPjx0ZXh0IHg9IjE1MCIgeT0iMTUwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMjQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+UHV6emxlIERlbW88L3RleHQ+PC9zdmc+',
+      originalImage: '',
       gridSize: 3,
       pieces: [],
       isCompleted: false,
       state: 'playing'
     };
-    
+
     setSession(mockSession);
     setSessionCode(inputCode.trim());
-    setIsCreator(false);
     setGameState('playing');
   };
 
   const startGame = () => {
     if (!session) return;
-    
-    const updatedSession = {
+
+    const updatedSession: PuzzleSession = {
       ...session,
-      state: 'playing' as const,
+      state: 'playing',
       solver: {
         id: 'solver',
         name: 'Joueur 2',
         connected: true
       }
     };
-    
+
     setSession(updatedSession);
     setGameState('playing');
   };
 
-  const handlePieceMouseDown = (piece: PuzzlePiece, event: React.MouseEvent) => {
-    if (!isCreator) { // Only solver can move pieces
-      const rect = (event.target as HTMLElement).getBoundingClientRect();
-      setDraggedPiece(piece);
-      setDragOffset({
-        x: event.clientX - rect.left,
-        y: event.clientY - rect.top
-      });
-    }
+  const handlePieceClick = (pieceId: number) => {
+    setSelectedPieceId(pieceId);
   };
 
-  const handleMouseMove = useCallback((event: MouseEvent) => {
-    if (draggedPiece && session) {
-      const newX = event.clientX - dragOffset.x;
-      const newY = event.clientY - dragOffset.y;
-      
-      const updatedPieces = session.pieces.map(piece =>
-        piece.id === draggedPiece.id
-          ? { ...piece, currentX: newX, currentY: newY }
-          : piece
-      );
-      
-      setSession({ ...session, pieces: updatedPieces });
-    }
-  }, [draggedPiece, dragOffset, session]);
+  const handleBoardCellClick = (row: number, col: number) => {
+    if (selectedPieceId === null || !session) return;
 
-  const handleMouseUp = useCallback(() => {
-    if (draggedPiece && session) {
-      // Check if piece is close to correct position (snap to grid)
-      const snapThreshold = 30;
-      const piece = session.pieces.find(p => p.id === draggedPiece.id);
-      
-      if (piece) {
-        const isNearCorrectPosition = 
-          Math.abs(piece.currentX - piece.correctX) < snapThreshold &&
-          Math.abs(piece.currentY - piece.correctY) < snapThreshold;
-        
-        if (isNearCorrectPosition) {
-          const updatedPieces = session.pieces.map(p =>
-            p.id === piece.id
-              ? { ...p, currentX: p.correctX, currentY: p.correctY, isPlaced: true }
-              : p
-          );
-          
-          const allPlaced = updatedPieces.every(p => p.isPlaced);
-          
-          setSession({
-            ...session,
-            pieces: updatedPieces,
-            isCompleted: allPlaced,
-            state: allPlaced ? 'completed' : 'playing',
-            endTime: allPlaced ? Date.now() : undefined
-          });
-          
-          if (allPlaced) {
-            setGameState('completed');
-          }
-        }
+    const piece = session.pieces.find(p => p.id === selectedPieceId);
+    if (!piece) return;
+
+    if (piece.correctX === col && piece.correctY === row) {
+      const updatedPieces = session.pieces.map(p =>
+        p.id === piece.id ? { ...p, isPlaced: true } : p
+      );
+
+      const allPlaced = updatedPieces.every(p => p.isPlaced);
+
+      setSession({
+        ...session,
+        pieces: updatedPieces,
+        isCompleted: allPlaced,
+        state: allPlaced ? 'completed' : 'playing',
+        endTime: allPlaced ? Date.now() : undefined
+      });
+
+      if (allPlaced) {
+        setGameState('completed');
       }
     }
-    
-    setDraggedPiece(null);
-  }, [draggedPiece, session]);
 
-  useEffect(() => {
-    if (draggedPiece) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [draggedPiece, handleMouseMove, handleMouseUp]);
+    setSelectedPieceId(null);
+  };
 
   const copyToClipboard = async () => {
     try {
@@ -265,7 +217,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
     setSelectedImage('');
     setPlayerName('');
     setInputCode('');
-    setDraggedPiece(null);
+    setSelectedPieceId(null);
   };
 
   // Session Setup Screen
@@ -293,7 +245,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               <p className="text-blue-200 text-sm">Créez et résolvez des puzzles personnalisés</p>
             </div>
 
-            {/* Mode Selection */}
             <div className="grid grid-cols-2 gap-4 mb-6">
               <button
                 onClick={() => setSessionMode('create')}
@@ -321,7 +272,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               </button>
             </div>
 
-            {/* Player Name */}
             <div className="mb-6">
               <label className="block text-blue-200 text-sm font-medium mb-2">
                 Votre nom
@@ -336,7 +286,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               />
             </div>
 
-            {/* Join Code Input */}
             {sessionMode === 'join' && (
               <div className="mb-6">
                 <label className="block text-blue-200 text-sm font-medium mb-2">
@@ -353,7 +302,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               </div>
             )}
 
-            {/* Action Button */}
             <button
               onClick={sessionMode === 'create' ? () => setGameState('image-selection') : joinSession}
               disabled={!playerName.trim() || (sessionMode === 'join' && !inputCode.trim())}
@@ -385,12 +333,11 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
           </div>
 
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 shadow-2xl border border-blue-500/20">
-            {/* Image Upload */}
             <div className="mb-6">
               <label className="block text-blue-200 text-sm font-medium mb-3">
                 Choisissez votre image
               </label>
-              
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -398,7 +345,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
                 onChange={handleImageUpload}
                 className="hidden"
               />
-              
+
               <button
                 onClick={() => fileInputRef.current?.click()}
                 className="w-full border-2 border-dashed border-blue-500/50 rounded-lg p-8 hover:border-blue-400 transition-colors"
@@ -423,7 +370,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               </button>
             </div>
 
-            {/* Difficulty Selection */}
             <div className="mb-6">
               <label className="block text-blue-200 text-sm font-medium mb-3">
                 Niveau de difficulté
@@ -455,7 +401,6 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {/* Create Button */}
             <button
               onClick={createSession}
               disabled={!selectedImage}
@@ -477,9 +422,9 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
         <div className="max-w-md w-full text-center">
           <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 shadow-2xl border border-blue-500/20">
             <div className="animate-spin w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-6"></div>
-            
+
             <h2 className="text-2xl font-bold text-white mb-4">En attente du joueur...</h2>
-            
+
             <div className="bg-slate-700/50 rounded-lg p-4 mb-6">
               <p className="text-blue-200 text-sm mb-3">Code de session :</p>
               <div className="flex items-center gap-3">
@@ -495,11 +440,11 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
                 </button>
               </div>
             </div>
-            
+
             <p className="text-blue-200 text-sm mb-6">
               Partagez ce code avec la personne qui va résoudre votre puzzle
             </p>
-            
+
             <div className="space-y-3">
               <button
                 onClick={startGame}
@@ -522,6 +467,10 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
 
   // Playing Screen
   if (gameState === 'playing' && session) {
+    const cellSize = BOARD_SIZE / session.gridSize;
+    const placedCount = session.pieces.filter(p => p.isPlaced).length;
+    const availablePieces = session.pieces.filter(p => !p.isPlaced);
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 px-4 py-8 safe-area-inset">
         <div className="max-w-4xl mx-auto">
@@ -534,82 +483,112 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
               <Home className="w-4 h-4" />
               <span className="text-sm">Temple</span>
             </button>
-            
+
             <div className="text-center">
               <h1 className="text-xl font-bold text-white">Puzzle !</h1>
               <p className="text-blue-200 text-sm">
-                {session.pieces.filter(p => p.isPlaced).length} / {session.pieces.length} pièces placées
+                {placedCount} / {session.pieces.length} pièces placées
               </p>
             </div>
-            
+
             <div className="w-16"></div>
           </div>
 
           {/* Game Area */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Puzzle Board */}
+            {/* Puzzle Board — no image preview, just empty grid */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
               <h3 className="text-white font-semibold mb-4 text-center">Zone de reconstruction</h3>
-              <div 
-                className="relative bg-slate-700/30 rounded-lg mx-auto border-2 border-dashed border-blue-500/30"
-                style={{ 
-                  width: '300px', 
-                  height: '300px',
-                  backgroundImage: `url(${session.originalImage})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  opacity: 0.1
-                }}
+              <div
+                className="relative mx-auto border-2 border-dashed border-blue-500/30 rounded-lg overflow-hidden"
+                style={{ width: `${BOARD_SIZE}px`, height: `${BOARD_SIZE}px` }}
               >
-                {session.pieces.filter(piece => piece.isPlaced).map((piece) => (
-                  <img
-                    key={piece.id}
-                    src={piece.imageData}
-                    alt={`Pièce ${piece.id}`}
-                    className="absolute cursor-pointer"
-                    style={{
-                      left: `${(piece.currentX / session.pieces[0]?.width) * (300 / session.gridSize)}px`,
-                      top: `${(piece.currentY / session.pieces[0]?.height) * (300 / session.gridSize)}px`,
-                      width: `${300 / session.gridSize}px`,
-                      height: `${300 / session.gridSize}px`
-                    }}
-                  />
-                ))}
+                {Array.from({ length: session.gridSize * session.gridSize }).map((_, idx) => {
+                  const row = Math.floor(idx / session.gridSize);
+                  const col = idx % session.gridSize;
+                  const pieceInCell = session.pieces.find(p => p.isPlaced && p.correctX === col && p.correctY === row);
+                  const isHighlighted = selectedPieceId !== null && !pieceInCell;
+
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => !pieceInCell && handleBoardCellClick(row, col)}
+                      className={`absolute border border-slate-600/30 transition-colors ${
+                        pieceInCell ? '' : isHighlighted ? 'bg-blue-500/20 hover:bg-blue-500/40 cursor-pointer' : 'cursor-pointer'
+                      }`}
+                      style={{
+                        left: `${col * cellSize}px`,
+                        top: `${row * cellSize}px`,
+                        width: `${cellSize}px`,
+                        height: `${cellSize}px`
+                      }}
+                    >
+                      {pieceInCell && (
+                        <img
+                          src={pieceInCell.imageData}
+                          alt={`Pièce ${pieceInCell.id}`}
+                          className="w-full h-full object-cover"
+                          draggable={false}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
+              <p className="text-blue-300 text-xs text-center mt-3">
+                {selectedPieceId !== null
+                  ? 'Cliquez sur la case où placer cette pièce'
+                  : 'Sélectionnez une pièce ci-dessous'}
+              </p>
             </div>
 
             {/* Pieces Pool */}
             <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
               <h3 className="text-white font-semibold mb-4 text-center">Pièces disponibles</h3>
-              <div className="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto">
-                {session.pieces.filter(piece => !piece.isPlaced).map((piece) => (
-                  <div
-                    key={piece.id}
-                    className="relative cursor-move hover:scale-105 transition-transform"
-                    onMouseDown={(e) => handlePieceMouseDown(piece, e)}
-                  >
-                    <img
-                      src={piece.imageData}
-                      alt={`Pièce ${piece.id}`}
-                      className="w-full h-auto rounded border-2 border-blue-500/30 hover:border-blue-400"
-                      draggable={false}
-                    />
-                  </div>
-                ))}
-              </div>
+              {availablePieces.length === 0 ? (
+                <div className="text-center py-8">
+                  <Sparkles className="w-10 h-10 text-cyan-400 mx-auto mb-3" />
+                  <p className="text-blue-200 text-sm">Toutes les pièces sont placées !</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-3 max-h-96 overflow-y-auto">
+                  {availablePieces.map((piece) => (
+                    <button
+                      key={piece.id}
+                      onClick={() => handlePieceClick(piece.id)}
+                      className={`relative rounded border-2 transition-all duration-200 mobile-button touch-action-none ${
+                        selectedPieceId === piece.id
+                          ? 'border-cyan-400 ring-2 ring-cyan-400/50 scale-105'
+                          : 'border-blue-500/30 hover:border-blue-400'
+                      }`}
+                      style={{
+                        width: `${cellSize}px`,
+                        height: `${cellSize}px`
+                      }}
+                    >
+                      <img
+                        src={piece.imageData}
+                        alt={`Pièce ${piece.id}`}
+                        className="w-full h-full object-cover rounded"
+                        draggable={false}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
           {/* Progress */}
           <div className="mt-6 text-center">
             <div className="bg-slate-700 rounded-full h-3 max-w-md mx-auto mb-2">
-              <div 
+              <div
                 className="bg-gradient-to-r from-blue-500 to-cyan-500 h-3 rounded-full transition-all duration-300"
-                style={{ width: `${(session.pieces.filter(p => p.isPlaced).length / session.pieces.length) * 100}%` }}
+                style={{ width: `${(placedCount / session.pieces.length) * 100}%` }}
               ></div>
             </div>
             <p className="text-blue-300 text-sm">
-              Progression : {Math.round((session.pieces.filter(p => p.isPlaced).length / session.pieces.length) * 100)}%
+              Progression : {Math.round((placedCount / session.pieces.length) * 100)}%
             </p>
           </div>
         </div>
@@ -619,7 +598,7 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
 
   // Completed Screen
   if (gameState === 'completed' && session) {
-    const duration = session.endTime && session.startTime 
+    const duration = session.endTime && session.startTime
       ? Math.round((session.endTime - session.startTime) / 1000)
       : 0;
 
@@ -630,10 +609,10 @@ const PuzzleGame: React.FC<PuzzleGameProps> = ({ onBack }) => {
             <div className="text-center mb-8">
               <Trophy className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
               <h1 className="text-2xl font-bold text-white mb-2">Puzzle Résolu !</h1>
-              <p className="text-blue-200">Félicitations ! 🎉</p>
+              <p className="text-blue-200">Félicitations !</p>
             </div>
 
-            {/* Completed Image */}
+            {/* Completed Image — revealed only here as a surprise */}
             <div className="mb-6">
               <img
                 src={session.originalImage}
