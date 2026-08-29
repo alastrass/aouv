@@ -24,6 +24,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [showWheel, setShowWheel] = useState(false);
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
   const [turnCount, setTurnCount] = useState(0);
+  const isSpeedExtreme = category === 'speed-extreme';
 
   useEffect(() => {
     try {
@@ -107,7 +108,9 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     }
 
     setIsSpinning(true);
-    setShowWheel(true);
+    if (!isSpeedExtreme) setShowWheel(true);
+
+    const spinDuration = isSpeedExtreme ? 600 : 2000;
 
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * availableChallenges.length);
@@ -120,7 +123,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
       setTimeout(() => {
         setShowWheel(false);
       }, 500);
-    }, 2000);
+    }, spinDuration);
   };
 
   const handleChallengeDone = () => {
@@ -133,6 +136,10 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     setShowWheel(false);
     setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
     setTurnCount(prev => prev + 1);
+
+    if (isSpeedExtreme) {
+      setTimeout(() => spinWheel(), 400);
+    }
   };
 
   const handleReset = () => {
@@ -169,8 +176,12 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
             Retour
           </button>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-rose-400 to-red-400">
-            Arrête de Tergiverser
+          <h1 className={`text-2xl sm:text-3xl font-bold text-transparent bg-clip-text ${
+              isSpeedExtreme
+                ? 'bg-gradient-to-r from-amber-400 to-orange-400'
+                : 'bg-gradient-to-r from-rose-400 to-red-400'
+            }`}>
+            {isSpeedExtreme ? 'Speed & Extrême' : 'Arrête de Tergiverser'}
           </h1>
 
           <button
@@ -206,8 +217,12 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
 
               <div className="bg-slate-800/80 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-rose-500/30 shadow-2xl">
                 <div className="text-center mb-4 sm:mb-6">
-                  <div className="inline-block px-6 py-2 rounded-full text-sm font-semibold mb-4 bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                    💫 Défi d'Action
+                  <div className={`inline-block px-6 py-2 rounded-full text-sm font-semibold mb-4 ${
+                        isSpeedExtreme
+                          ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                          : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                      }`}>
+                    {isSpeedExtreme ? '⚡ Défi Extrême' : '💫 Défi d\'Action'}
                   </div>
                 </div>
 
@@ -229,6 +244,10 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                       setShowWheel(false);
                       setCurrentPlayerIndex((currentPlayerIndex + 1) % players.length);
                       setTurnCount(prev => prev + 1);
+
+                      if (isSpeedExtreme) {
+                        setTimeout(() => spinWheel(), 400);
+                      }
                     }}
                     className="flex items-center justify-center gap-3 px-6 sm:px-8 py-4 bg-red-600 active:bg-red-700 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg mobile-button touch-action-none"
                   >
@@ -244,7 +263,11 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
             <button
               onClick={spinWheel}
               disabled={isSpinning || getAvailableChallenges().length === 0}
-              className="bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-6 px-12 rounded-2xl text-xl sm:text-2xl transition-all duration-300 shadow-xl hover:shadow-2xl mobile-button touch-action-none"
+              className={`disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-6 px-12 rounded-2xl text-xl sm:text-2xl transition-all duration-300 shadow-xl hover:shadow-2xl mobile-button touch-action-none ${
+                isSpeedExtreme
+                  ? 'bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700'
+                  : 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-700 hover:to-red-700'
+              }`}
             >
               {getAvailableChallenges().length === 0 ? 'Tous les défis utilisés' : 'Lancer le défi'}
             </button>

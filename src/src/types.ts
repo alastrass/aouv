@@ -17,7 +17,7 @@ export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 
 
 export type GameState = 'setup' | 'playing';
 
-export type Category = 'soft' | 'intense';
+export type Category = 'soft' | 'intense' | 'speed-extreme';
 
 export type SwipeDirection = 'left' | 'right';
 

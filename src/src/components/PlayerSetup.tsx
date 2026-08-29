@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Settings, Plus, Trash2, Heart } from 'lucide-react';
+import { Users, Settings, Plus, Trash2, Heart, Zap } from 'lucide-react';
 import { Player, Category, Challenge, CustomChallengeInput } from '../types';
 import PrizeDefinition from './PrizeDefinition';
 import TargetScoreSetup from './TargetScoreSetup';
@@ -146,7 +146,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
           {/* Category Selection */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Mode de Jeu</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <button
                 onClick={() => setCategory('soft')}
                 className={`p-6 rounded-xl border-2 transition-all duration-300 ${
@@ -173,6 +173,20 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 <h3 className="text-white font-semibold mb-2">Mode Intense</h3>
                 <p className="text-purple-200 text-sm">
                   Contenu plus audacieux et sensuel pour les couples expérimentés
+                </p>
+              </button>
+              <button
+                onClick={() => setCategory('speed-extreme')}
+                className={`p-6 rounded-xl border-2 transition-all duration-300 ${
+                  category === 'speed-extreme'
+                    ? 'border-amber-400 bg-amber-500/20'
+                    : 'border-purple-500/30 bg-slate-700/50 hover:border-amber-400/50'
+                }`}
+              >
+                <Zap className="w-8 h-8 text-amber-400 mx-auto mb-3" />
+                <h3 className="text-white font-semibold mb-2">Speed & Extrême</h3>
+                <p className="text-purple-200 text-sm">
+                  Défis très hard enchaînés à un rythme ultra-rapide, sans temps mort
                 </p>
               </button>
             </div>
@@ -227,6 +241,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                     >
                       <option value="soft">Soft</option>
                       <option value="intense">Intense</option>
+                      <option value="speed-extreme">Speed & Extrême</option>
                     </select>
                   </div>
                 </div>
@@ -265,7 +280,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
             {filteredCustomChallenges.length > 0 && (
               <div className="space-y-2">
                 <p className="text-purple-200 text-sm mb-3">
-                  Défis personnalisés pour le mode {category === 'soft' ? 'Soft' : 'Intense'} :
+                  Défis personnalisés pour le mode {category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'} :
                 </p>
                 {filteredCustomChallenges.map((challenge) => (
                   <div key={challenge.id} className="bg-slate-700/30 rounded-lg p-3 flex items-center justify-between">
