@@ -3,7 +3,6 @@ import { Challenge, Category } from '../types';
 export const challenges: Record<Category, Challenge[]> = {
   soft: [
     // Truth questions - Soft
-       // Truth questions - Soft
     { id: 1, type: 'truth', category: 'soft', text: "Quel est ton fantasme le plus doux que tu n'as jamais réalisé ?" },
     { id: 2, type: 'truth', category: 'soft', text: "Quelle partie de mon corps préfères-tu ?" },
     { id: 3, type: 'truth', category: 'soft', text: "Quel a été notre moment le plus romantique ensemble ?" },
@@ -109,607 +108,107 @@ export const challenges: Record<Category, Challenge[]> = {
   ],
   intense: [
     // Truth questions - Intense
-   {
-  "id": 101,
-  "type": "truth",
-  "category": "intense",
-  "text": "Partage ton fantasme le plus chaud avec ton partenaire."
-},
-{
-  "id": 102,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle position aimerais-tu que vous essayiez ensemble ?"
-},
-{
-  "id": 103,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel endroit insolite te rendrait excité pour faire l'amour avec ton partenaire ?"
-},
-{
-  "id": 104,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle partie du corps de ton partenaire te fait le plus d'effet ?"
-},
-{
-  "id": 105,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel rôle aimerais-tu jouer dans vos jeux intimes avec ton partenaire ?"
-},
-{
-  "id": 106,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle expérience sensuelle aimerais-tu que vous découvriez ensemble ?"
-},
-{
-  "id": 107,
-  "type": "truth",
-  "category": "intense",
-  "text": "À quoi penses-tu quand tu désires le plus ton partenaire ?"
-},
-{
-  "id": 108,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel accessoire aimerais-tu qu'on utilise ensemble ?"
-},
-{
-  "id": 109,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle tenue trouves-tu ton partenaire le plus séduisant(e) ?"
-},
-{
-  "id": 110,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel jeu intime aimerais-tu que vous inventiez ensemble ?"
-},
-{
-  "id": 111,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle est ta zone érogène la plus sensible ?"
-},
-{
-  "id": 112,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel moment de la journée te donne le plus envie de ton partenaire ?"
-},
-{
-  "id": 113,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle surprise sensuelle aimerais-tu que ton partenaire te fasse ?"
-},
-{
-  "id": 114,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel type de massage te procure le plus de plaisir ?"
-},
-{
-  "id": 115,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle ambiance préfères-tu vos moments intimes ?"
-},
-{
-  "id": 116,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle expérience sensuelle veux-tu absolument vivre avec ton partenaire ?"
-},
-{
-  "id": 117,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel est votre souvenir le plus excitant de vous deux ?"
-},
-{
-  "id": 118,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle partie du corps de ton partenaire aimerais-tu explorer davantage ?"
-},
-{
-  "id": 119,
-  "type": "truth",
-  "category": "intense",
-  "text": "Que choisis-tu : Se filmer ou se photographier avec ton partenaire ?"
-},
-{
-  "id": 120,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle sensation physique préfères-tu que ton partenaire te procure ?"
-},
-{
-  "id": 121,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel fantasme de domination ou soumission as-tu ?"
-},
-{
-  "id": 122,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle position te sens-tu le plus désirable ?"
-},
-{
-  "id": 123,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel type de préliminaires préfères-tu ?"
-},
-{
-  "id": 124,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle expérience à trois t'intrigue le plus ?"
-},
-{
-  "id": 125,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel endroit de ton corps aimerais-tu que ton partenaire embrasse plus ?"
-},
-{
-  "id": 126,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle pratique sensuelle aimerais-tu maîtriser ?"
-},
-{
-  "id": 127,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel rythme préfères-tu pendant vos ébats ?"
-},
-{
-  "id": 128,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle température ambiante préfères-tu pour l'intimité ?"
-},
-{
-  "id": 129,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel jeu de rôle aimerais-tu que vous exploriez ?"
-},
-{
-  "id": 130,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle partie des préliminaires de ton partenaire préfères-tu ?"
-},
-{
-  "id": 131,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel objet du quotidien détournes-tu en accessoire sensuel ?"
-},
-{
-  "id": 132,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle pièce aimerais-tu que vous soyez plus aventureux ?"
-},
-{
-  "id": 133,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle expérience de plaisir mutuel veux-tu tenter avec ton partenaire ?"
-},
-{
-  "id": 134,
-  "type": "truth",
-  "category": "intense",
-  "text": "Que penses-tu de la façon dont ton partenaire te suce/lèche ?"
-},
-{
-  "id": 135,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle fantaisie aimerais-tu réaliser cette semaine avec ton partenaire ?"
-},
-{
-  "id": 136,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel moment de votre intimité te procure le plus d'émotion ?"
-},
-{
-  "id": 137,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle surprise érotique aimerais-tu découvrir ?"
-},
-{
-  "id": 138,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle situation te sens-tu le plus excité(e) ?"
-},
-{
-  "id": 139,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel type de caresse te fait perdre la tête ?"
-},
-{
-  "id": 140,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle nouvelle expérience sensuelle veux-tu essayer avec ton partenaire ?"
-},
-{
-  "id": 141,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel endroit intime aimerais-tu que ton partenaire explore chez toi ?"
-},
-{
-  "id": 142,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle technique aimerais-tu que ton partenaire perfectionne ?"
-},
-{
-  "id": 143,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel moment d'abandon total aimerais-tu vivre ?"
-},
-{
-  "id": 144,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle expérience de plaisir partagé te tente le plus avec ton partenaire ?"
-},
-{
-  "id": 145,
-  "type": "truth",
-  "category": "intense",
-  "text": "Dans quelle position aimerais-tu me dominer ?"
-},
-{
-  "id": 146,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel fantasme secret aimerais-tu me confier ?"
-},
-{
-  "id": 147,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle sensation physique te procure le plus de frissons ?"
-},
-{
-  "id": 148,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel jeu sensuel aimerais-tu qu'on invente ensemble ?"
-},
-{
-  "id": 149,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quelle partie de mon corps aimerais-tu posséder complètement ?"
-},
-{
-  "id": 150,
-  "type": "truth",
-  "category": "intense",
-  "text": "Quel moment d'extase aimerais-tu qu'on atteigne ensemble ?"
-},
+    { id: 101, type: "truth", category: "intense", text: "Partage ton fantasme le plus chaud avec ton partenaire." },
+    { id: 102, type: "truth", category: "intense", text: "Quelle position aimerais-tu que vous essayiez ensemble ?" },
+    { id: 103, type: "truth", category: "intense", text: "Quel endroit insolite te rendrait excité pour faire l'amour avec ton partenaire ?" },
+    { id: 104, type: "truth", category: "intense", text: "Quelle partie du corps de ton partenaire te fait le plus d'effet ?" },
+    { id: 105, type: "truth", category: "intense", text: "Quel rôle aimerais-tu jouer dans vos jeux intimes avec ton partenaire ?" },
+    { id: 106, type: "truth", category: "intense", text: "Quelle expérience sensuelle aimerais-tu que vous découvriez ensemble ?" },
+    { id: 107, type: "truth", category: "intense", text: "À quoi penses-tu quand tu désires le plus ton partenaire ?" },
+    { id: 108, type: "truth", category: "intense", text: "Quel accessoire aimerais-tu qu'on utilise ensemble ?" },
+    { id: 109, type: "truth", category: "intense", text: "Dans quelle tenue trouves-tu ton partenaire le plus séduisant(e) ?" },
+    { id: 110, type: "truth", category: "intense", text: "Quel jeu intime aimerais-tu que vous inventiez ensemble ?" },
+    { id: 111, type: "truth", category: "intense", text: "Quelle est ta zone érogène la plus sensible ?" },
+    { id: 112, type: "truth", category: "intense", text: "Quel moment de la journée te donne le plus envie de ton partenaire ?" },
+    { id: 113, type: "truth", category: "intense", text: "Quelle surprise sensuelle aimerais-tu que ton partenaire te fasse ?" },
+    { id: 114, type: "truth", category: "intense", text: "Quel type de massage te procure le plus de plaisir ?" },
+    { id: 115, type: "truth", category: "intense", text: "Dans quelle ambiance préfères-tu vos moments intimes ?" },
+    { id: 116, type: "truth", category: "intense", text: "Quelle expérience sensuelle veux-tu absolument vivre avec ton partenaire ?" },
+    { id: 117, type: "truth", category: "intense", text: "Quel est votre souvenir le plus excitant de vous deux ?" },
+    { id: 118, type: "truth", category: "intense", text: "Quelle partie du corps de ton partenaire aimerais-tu explorer davantage ?" },
+    { id: 119, type: "truth", category: "intense", text: "Que choisis-tu : Se filmer ou se photographier avec ton partenaire ?" },
+    { id: 120, type: "truth", category: "intense", text: "Quelle sensation physique préfères-tu que ton partenaire te procure ?" },
+    { id: 121, type: "truth", category: "intense", text: "Quel fantasme de domination ou soumission as-tu ?" },
+    { id: 122, type: "truth", category: "intense", text: "Dans quelle position te sens-tu le plus désirable ?" },
+    { id: 123, type: "truth", category: "intense", text: "Quel type de préliminaires préfères-tu ?" },
+    { id: 124, type: "truth", category: "intense", text: "Quelle expérience à trois t'intrigue le plus ?" },
+    { id: 125, type: "truth", category: "intense", text: "Quel endroit de ton corps aimerais-tu que ton partenaire embrasse plus ?" },
+    { id: 126, type: "truth", category: "intense", text: "Quelle pratique sensuelle aimerais-tu maîtriser ?" },
+    { id: 127, type: "truth", category: "intense", text: "Quel rythme préfères-tu pendant vos ébats ?" },
+    { id: 128, type: "truth", category: "intense", text: "Quelle température ambiante préfères-tu pour l'intimité ?" },
+    { id: 129, type: "truth", category: "intense", text: "Quel jeu de rôle aimerais-tu que vous exploriez ?" },
+    { id: 130, type: "truth", category: "intense", text: "Quelle partie des préliminaires de ton partenaire préfères-tu ?" },
+    { id: 131, type: "truth", category: "intense", text: "Quel objet du quotidien détournes-tu en accessoire sensuel ?" },
+    { id: 132, type: "truth", category: "intense", text: "Dans quelle pièce aimerais-tu que vous soyez plus aventureux ?" },
+    { id: 133, type: "truth", category: "intense", text: "Quelle expérience de plaisir mutuel veux-tu tenter avec ton partenaire ?" },
+    { id: 134, type: "truth", category: "intense", text: "Que penses-tu de la façon dont ton partenaire te suce/lèche ?" },
+    { id: 135, type: "truth", category: "intense", text: "Quelle fantaisie aimerais-tu réaliser cette semaine avec ton partenaire ?" },
+    { id: 136, type: "truth", category: "intense", text: "Quel moment de votre intimité te procure le plus d'émotion ?" },
+    { id: 137, type: "truth", category: "intense", text: "Quelle surprise érotique aimerais-tu découvrir ?" },
+    { id: 138, type: "truth", category: "intense", text: "Dans quelle situation te sens-tu le plus excité(e) ?" },
+    { id: 139, type: "truth", category: "intense", text: "Quel type de caresse te fait perdre la tête ?" },
+    { id: 140, type: "truth", category: "intense", text: "Quelle nouvelle expérience sensuelle veux-tu essayer avec ton partenaire ?" },
+    { id: 141, type: "truth", category: "intense", text: "Quel endroit intime aimerais-tu que ton partenaire explore chez toi ?" },
+    { id: 142, type: "truth", category: "intense", text: "Quelle technique aimerais-tu que ton partenaire perfectionne ?" },
+    { id: 143, type: "truth", category: "intense", text: "Quel moment d'abandon total aimerais-tu vivre ?" },
+    { id: 144, type: "truth", category: "intense", text: "Quelle expérience de plaisir partagé te tente le plus avec ton partenaire ?" },
+    { id: 145, type: "truth", category: "intense", text: "Dans quelle position aimerais-tu me dominer ?" },
+    { id: 146, type: "truth", category: "intense", text: "Quel fantasme secret aimerais-tu me confier ?" },
+    { id: 147, type: "truth", category: "intense", text: "Quelle sensation physique te procure le plus de frissons ?" },
+    { id: 148, type: "truth", category: "intense", text: "Quel jeu sensuel aimerais-tu qu'on invente ensemble ?" },
+    { id: 149, type: "truth", category: "intense", text: "Quelle partie de mon corps aimerais-tu posséder complètement ?" },
+    { id: 150, type: "truth", category: "intense", text: "Quel moment d'extase aimerais-tu qu'on atteigne ensemble ?" },
     
-    // Dare actions - Intense
-   {
-  "id": 151,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage sensuel à ton partenaire, sans utiliser tes mains."
-},
-{
-  "id": 152,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise ta langue pour suivre le parcours de la main de ton partenaire sur ton propre corps."
-},
-{
-  "id": 153,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse ton partenaire sensuellement pendant 3 minutes."
-},
-{
-  "id": 154,
-  "type": "dare",
-  "category": "intense",
-  "text": "Murmure tes fantasmes les plus secrets à l'oreille de ton partenaire."
-},
-{
-  "id": 155,
-  "type": "dare",
-  "category": "intense",
-  "text": "Ton partenaire ne doit pas bander/mouiller pendant que tu te touches. Il y aura des contrôles !"
-},
-{
-  "id": 156,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse une partie du corps de ton partenaire de ton choix pendant 2 minutes."
-},
-{
-  "id": 157,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage intime à ton partenaire, avec de l'huile."
-},
-{
-  "id": 158,
-  "type": "dare",
-  "category": "intense",
-  "text": "Raconte en détail à ton partenaire ce que tu veux lui faire."
-},
-{
-  "id": 159,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse tout le corps de ton partenaire sans utiliser tes mains."
-},
-{
-  "id": 160,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un strip-tease lent et sensuel à ton partenaire."
-},
-{
-  "id": 161,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse ton partenaire partout pendant 3 minutes."
-},
-{
-  "id": 162,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise tes lèvres pour explorer le corps de ton partenaire."
-},
-{
-  "id": 163,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage complet du corps à ton partenaire pendant 10 minutes, sans les mains, avec de l'huile."
-},
-{
-  "id": 164,
-  "type": "dare",
-  "category": "intense",
-  "text": "Raconte tes zones érogènes à ton partenaire en les touchant."
-},
-{
-  "id": 165,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse ton partenaire avec un objet doux (plume, soie, etc.)."
-},
-{
-  "id": 166,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse sensuellement l'intérieur des cuisses de ton partenaire."
-},
-{
-  "id": 167,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage très sensuel à ton partenaire."
-},
-{
-  "id": 168,
-  "type": "dare",
-  "category": "intense",
-  "text": "Souffle doucement sur tout le corps de ton partenaire."
-},
-{
-  "id": 169,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise ta langue pour tracer des formes sur la peau de ton partenaire."
-},
-{
-  "id": 170,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais découvrir à ton partenaire une nouvelle sensation avec tes mains."
-},
-{
-  "id": 171,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse les cheveux de ton partenaire pendant que tu l'embrasses."
-},
-{
-  "id": 172,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage anal très doux à ton partenaire."
-},
-{
-  "id": 173,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse la nuque de ton partenaire pendant qu'il ne te regarde pas."
-},
-{
-  "id": 174,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise de la glace pour procurer des sensations à ton partenaire."
-},
-{
-  "id": 175,
-  "type": "dare",
-  "category": "intense",
-  "text": "Bande les yeux de ton partenaire et fais-lui ce que tu veux."
-},
-{
-  "id": 176,
-  "type": "dare",
-  "category": "intense",
-  "text": "Choisis une vidéo porno qui te plaît et explique à ton partenaire ce qui te plaît pendant que vous la regardez."
-},
-{
-  "id": 177,
-  "type": "dare",
-  "category": "intense",
-  "text": "Explore le corps de ton partenaire avec tes mains, les yeux fermés."
-},
-{
-  "id": 178,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage des hanches sensuellement à ton partenaire."
-},
-{
-  "id": 179,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise tes cheveux pour caresser ton partenaire."
-},
-{
-  "id": 180,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse les oreilles de ton partenaire pendant 3 minutes."
-},
-{
-  "id": 181,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse la peau de ton partenaire avec différentes textures."
-},
-{
-  "id": 182,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais ressentir du plaisir à ton partenaire avec seulement ton souffle."
-},
-{
-  "id": 183,
-  "type": "dare",
-  "category": "intense",
-  "text": "Masse les mains de ton partenaire de façon très sensuelle."
-},
-{
-  "id": 184,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse les doigts de ton partenaire un par un, très lentement."
-},
-{
-  "id": 185,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse ton partenaire en le regardant dans les yeux."
-},
-{
-  "id": 186,
-  "type": "dare",
-  "category": "intense",
-  "text": "Trouve une position inhabituelle pour faire un bon cunnilingus ou une bonne fellation à ton partenaire."
-},
-{
-  "id": 187,
-  "type": "dare",
-  "category": "intense",
-  "text": "Masque les yeux de ta partenaire et possède sa main...  Guide là partout ou tu voudras."
-},
-{
-  "id": 188,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse la peau de ton partenaire avec des glaçons pendant 1 minute."
-},
-{
-  "id": 189,
-  "type": "dare",
-  "category": "intense",
-  "text": "Embrasse le creux du cou de ton partenaire passionnément."
-},
-{
-  "id": 190,
-  "type": "dare",
-  "category": "intense",
-  "text": "Explore les zones sensibles de ton partenaire avec tes lèvres."
-},
-{
-  "id": 191,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais frissonner ton partenaire avec seulement tes doigts."
-},
-{
-  "id": 192,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse l'arrière des fesses de ton partenaire sensuellement."
-},
-{
-  "id": 193,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise différentes pressions pour masser ton partenaire."
-},
-{
-  "id": 194,
-  "type": "dare",
-  "category": "intense",
-  "text": "Caresse ton partenaire en te caressant toi-même en même temps."
-},
-{
-  "id": 195,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais découvrir à ton partenaire une nouvelle zone érogène sur son propre corps."
-},
-{
-  "id": 196,
-  "type": "dare",
-  "category": "intense",
-  "text": "Choisis : Tu fais ce que ton partenaire veut ou il fait ce que tu veux pendant 3 minutes."
-},
-{
-  "id": 197,
-  "type": "dare",
-  "category": "intense",
-  "text": "Utilise ta langue pour dessiner sur la peau de ton partenaire."
-},
-{
-  "id": 198,
-  "type": "dare",
-  "category": "intense",
-  "text": "Fais un massage complet à ton partenaire avec tes lèvres."
-},
-{
-  "id": 199,
-  "type": "dare",
-  "category": "intense",
-  "text": "Explore le corps de ton partenaire comme une carte au trésor."
-},
-{
-  "id": 200,
-  "type": "dare",
-  "category": "intense",
-  "text": "JOKER - Tu choisis ce que tu veux !"
-}
+    // Dare actions - Intense (Modifiées)
+    { id: 151, type: "dare", category: "intense", text: "Fais une fellation ou un cunnilingus passionné à ton partenaire pendant 3 minutes sans qu'il/elle n'ait le droit de toucher à rien." },
+    { id: 152, type: "dare", category: "intense", text: "Utilise ta langue pour le/la lécher de la poitrine jusqu'au sexe en prenant tout ton temps." },
+    { id: 153, type: "dare", category: "intense", text: "Mords doucement les fesses et les cuisses de ton partenaire jusqu'à le/la faire gémir." },
+    { id: 154, type: "dare", category: "intense", text: "Chuchote à ton partenaire le détail exact de la position sexuelle dans laquelle tu vas le/la prendre ce soir." },
+    { id: 155, type: "dare", category: "intense", text: "Attache ou immobilise les mains de ton partenaire et stimule son sexe jusqu'au bord de l'orgasme avant de t'arrêter net." },
+    { id: 156, type: "dare", category: "intense", text: "Carresse le sexe de ton partenaire avec ta bouche sans utiliser tes mains pendant 2 minutes." },
+    { id: 157, type: "dare", category: "intense", text: "Enduis tes mains et son sexe d'huile de massage et fais-lui un massage érotique ultra-excitant." },
+    { id: 158, type: "dare", category: "intense", text: "Décris précisément ton dernier orgasme tout en masturbant ton partenaire." },
+    { id: 159, type: "dare", category: "intense", text: "Léche et suce les zones les plus intimes de ton partenaire uniquement avec les lèvres et la langue." },
+    { id: 160, type: "dare", category: "intense", text: "Fais un strip-tease intégral en te caressant jusqu'à être totalement nu(e) devant ton partenaire." },
+    { id: 161, type: "dare", category: "intense", text: "Donne 10 coups de langue bien ciblés et humides directement sur son clitoris ou son gland." },
+    { id: 162, type: "dare", category: "intense", text: "Explore l'entrejambe de ton partenaire uniquement avec le bout de tes lèvres." },
+    { id: 163, type: "dare", category: "intense", text: "Mets de l'huile et chevauche ton partenaire pour un massage corps-à-corps torse nu / peau contre peau." },
+    { id: 164, type: "dare", category: "intense", text: "Guide la main de ton partenaire sur ton sexe pour lui montrer exactement la vitesse et la pression que tu aimes." },
+    { id: 165, type: "dare", category: "intense", text: "Utilise un sextoy ou un accessoire directement sur son sexe pendant 2 minutes." },
+    { id: 166, type: "dare", category: "intense", text: "Embrasse et lèche intensément l'intérieur des cuisses en te rapprochant au plus près de son sexe sans le toucher tout de suite." },
+    { id: 167, type: "dare", category: "intense", text: "Masturbe ton partenaire lentement en le/la regardant droit dans les yeux." },
+    { id: 168, type: "dare", category: "intense", text: "Souffle de l'air chaud directement sur son sexe mouillé juste après l'avoir léché." },
+    { id: 169, type: "dare", category: "intense", text: "Utilise ta langue pour tracer le contour de son sexe et goûter ses sécrétions intimes." },
+    { id: 170, type: "dare", category: "intense", text: "Fais monter la tension en stimulant son anus doucement avec ton doigt pendant un baiser passionné." },
+    { id: 171, type: "dare", category: "intense", text: "Pénètre ton partenaire avec tes doigts (ou ta main) au rythme qu'il/elle te demande." },
+    { id: 172, type: "dare", category: "intense", text: "Fais-lui une stimulation anale douce (doigt ou langue) avec beaucoup de lubrifiant." },
+    { id: 173, type: "dare", category: "intense", text: "Attrape ton partenaire par les hanches et plaque-le/la contre toi pour un baiser brûlant et très physique." },
+    { id: 174, type: "dare", category: "intense", text: "Prends un glaçon dans ta bouche et fais une fellation / un cunnilingus glacé à ton partenaire." },
+    { id: 175, type: "dare", category: "intense", text: "Bande les yeux de ton partenaire et utilise tes doigts et ta bouche pour le/la faire gémir sans qu'il/elle sache ce qui vient." },
+    { id: 176, type: "dare", category: "intense", text: "Mets une scène de sexe explicite ou un porno et reproduis exactement la même position avec ton partenaire." },
+    { id: 177, type: "dare", category: "intense", text: "Masturbe ton partenaire les yeux fermés en te fiant uniquement à ses bruits et ses gémissements." },
+    { id: 178, type: "dare", category: "intense", text: "Attrape les fesses de ton partenaire à deux mains et embrasse-le/la sauvagement." },
+    { id: 179, type: "dare", category: "intense", text: "Fais glisser tes cheveux sur son sexe et son ventre jusqu'à le/la faire frissonner." },
+    { id: 180, type: "dare", category: "intense", text: "Suce et mords le lobe d'oreille de ton partenaire tout en lui caressant le sexe." },
+    { id: 181, type: "dare", category: "intense", text: "Fais varier la vitesse de ta masturbation sur ton partenaire : ultra lent pendant 1 minute, puis hyper rapide pendant 30 secondes." },
+    { id: 182, type: "dare", category: "intense", text: "Fais gémir ton partenaire sans utiliser tes mains, uniquement avec ta bouche sur ses zones érogènes." },
+    { id: 183, type: "dare", category: "intense", text: "Prends la main de ton partenaire et pose-la sur ton sexe chaud pour qu'il/elle sente ton excitation." },
+    { id: 184, type: "dare", category: "intense", text: "Suce et lèche chaque doigt de ton partenaire comme si c'était une fellation érotique." },
+    { id: 185, type: "dare", category: "intense", text: "Regarde ton partenaire se masturber devant toi sans intervenir jusqu'à ce qu'il/elle te demande de l'aide." },
+    { id: 186, type: "dare", category: "intense", text: "Mets ton partenaire dans une position levée ou acrobatique pour lui faire une fellation ou un cunnilingus intense." },
+    { id: 187, type: "dare", category: "intense", text: "Bande les yeux de ton partenaire, prends sa main et force-la à te caresser exactement où tu veux." },
+    { id: 188, type: "dare", category: "intense", text: "Fais glisser un glaçon directement sur ses tétons et son sexe jusqu'à ce qu'il fonde." },
+    { id: 189, type: "dare", category: "intense", text: "Suce le cou de ton partenaire jusqu'à lui laisser une marque de désir." },
+    { id: 190, type: "dare", category: "intense", text: "Lèche la ligne qui va de son nombril jusqu'à son sexe avec insistance." },
+    { id: 191, type: "dare", category: "intense", text: "Stimule son clitoris ou son frein avec seulement la pointe d'un doigt très mouillé." },
+    { id: 192, type: "dare", category: "intense", text: "Masse intensément les fesses de ton partenaire puis glisse tes doigts entre ses cuisses par derrière." },
+    { id: 193, type: "dare", category: "intense", text: "Varie la pression de tes doigts sur son sexe de très doux à franchement vigoureux." },
+    { id: 194, type: "dare", category: "intense", text: "Masturbe ton partenaire tout en te masturbant toi-même au même rythme." },
+    { id: 195, type: "dare", category: "intense", text: "Cherche la zone ou le point le plus sensible de son sexe et stimule-le sans t'arrêter pendant 2 minutes." },
+    { id: 196, type: "dare", category: "intense", text: "Impose à ton partenaire la position sexuelle de ton choix pour les 5 prochaines minutes." },
+    { id: 197, type: "dare", category: "intense", text: "Utilise ta salive pour lubrifier son sexe et le/la caresser vigoureusement." },
+    { id: 198, type: "dare", category: "intense", text: "Fais un baiser intime et prolongé directement sur son sexe." },
+    { id: 199, type: "dare", category: "intense", text: "Parcoure tout son corps avec tes lèvres jusqu'à atteindre son sexe pour le prendre dans ta bouche." },
+    { id: 200, type: "dare", category: "intense", text: "JOKER SEXE : Tu imposes l'acte ou le fantasme sexuel de ton choix à ton partenaire sur le champ !" }
   ]
 };
