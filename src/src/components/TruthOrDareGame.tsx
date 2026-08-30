@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Users, Trophy, RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
 import { GameState, Player, Challenge, Category } from '../types';
-import { challenges } from '../data/challenges';
+import { challenges, periodFriendlyChallenges } from '../data/challenges';
 import PlayerSetup from './PlayerSetup';
 import GameBoard from './GameBoard';
 import WheelSpinner from './WheelSpinner';
@@ -25,6 +25,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
   const [showWheel, setShowWheel] = useState(false);
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
   const [turnCount, setTurnCount] = useState(0);
+  const [periodFriendly, setPeriodFriendly] = useState(false);
 
   // Load data from localStorage
   useEffect(() => {
@@ -80,16 +81,20 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     selectedCategory: Category,
     customs: Challenge[],
     setupTargetScore?: number | string,
-    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } }
+    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
+    setupPeriodFriendly?: boolean
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
+    setPeriodFriendly(Boolean(setupPeriodFriendly));
     setGameState('playing');
   };
 
   const getAllChallenges = (): Challenge[] => {
-    const baseChallenges = challenges[category];
+    const baseChallenges = periodFriendly
+      ? periodFriendlyChallenges.filter(challenge => challenge.type === 'truth' || challenge.type === 'dare')
+      : challenges[category];
     if (turnCount >= 2) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
     }
@@ -160,6 +165,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setPlayers([]);
     setCurrentPlayerIndex(0);
     setCategory('soft');
+    setPeriodFriendly(false);
     setCurrentChallenge(null);
     setUsedChallenges([]);
     setCustomChallenges([]);
@@ -212,7 +218,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
                 <h1 className="text-xl sm:text-2xl font-bold text-white">Action ou Vérité</h1>
                 <Heart className="w-6 h-6 text-rose-400" />
               </div>
-              <p className="text-purple-200 text-sm">Mode {category === 'soft' ? 'Soft' : 'Intense'}</p>
+              <p className="text-purple-200 text-sm">{periodFriendly ? 'Mode Pas en forme' : `Mode ${category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'}`}</p>
             </div>
             
             <div className="w-16"></div>

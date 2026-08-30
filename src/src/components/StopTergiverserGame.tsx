@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
 import { Player, Challenge, Category } from '../types';
-import { challenges } from '../data/challenges';
+import { challenges, periodFriendlyChallenges } from '../data/challenges';
 import PlayerSetup from './PlayerSetup';
 import IntensitySpinner from './IntensitySpinner';
 import ScoreBoard from './ScoreBoard';
@@ -24,6 +24,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [showWheel, setShowWheel] = useState(false);
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
   const [turnCount, setTurnCount] = useState(0);
+  const [periodFriendly, setPeriodFriendly] = useState(false);
   const isSpeedExtreme = category === 'speed-extreme';
 
   useEffect(() => {
@@ -78,17 +79,21 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     selectedCategory: Category,
     customs: Challenge[],
     setupTargetScore?: number | string,
-    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } }
+    setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
+    setupPeriodFriendly?: boolean
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
+    setPeriodFriendly(Boolean(setupPeriodFriendly));
     setGameState('playing');
   };
 
   const getAllChallenges = (): Challenge[] => {
-    const baseChallenges = challenges[category].filter(c => c.type === 'dare');
-    if (turnCount >= 2) {
+    const baseChallenges = periodFriendly
+      ? periodFriendlyChallenges.filter(challenge => challenge.type === 'dare')
+      : challenges[category].filter(challenge => challenge.type === 'dare');
+    if (turnCount >= 2 && !periodFriendly) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
     }
     return baseChallenges;
@@ -181,7 +186,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                 ? 'bg-gradient-to-r from-amber-400 to-orange-400'
                 : 'bg-gradient-to-r from-rose-400 to-red-400'
             }`}>
-            {isSpeedExtreme ? 'Speed & Extrême' : 'Arrête de Tergiverser'}
+            {periodFriendly ? 'Pas en forme' : isSpeedExtreme ? 'Speed & Extrême' : 'Arrête de Tergiverser'}
           </h1>
 
           <button
@@ -222,7 +227,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                           ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                           : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                       }`}>
-                    {isSpeedExtreme ? '⚡ Défi Extrême' : '💫 Défi d\'Action'}
+                    {periodFriendly ? '♡ Défi douceur' : isSpeedExtreme ? '⚡ Défi Extrême' : '💫 Défi d\'Action'}
                   </div>
                 </div>
 

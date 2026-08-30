@@ -22,15 +22,30 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-function buildDeck(userTexts: string[]): FantasyCard[] {
+const periodFriendlyFantasies = [
+  'Se faire un massage des épaules et de la nuque avec une musique apaisante',
+  'Préparer une boisson chaude et se blottir ensemble sous un plaid',
+  'Prendre un bain relaxant ensemble, sans objectif autre que se détendre',
+  'Échanger un long câlin et respirer ensemble pendant quelques minutes',
+  'Se faire des compliments sincères et raconter son meilleur souvenir à deux',
+  'Regarder un film choisi ensemble, avec des caresses et des pauses câlins',
+  'Se masser les mains et les pieds à tour de rôle',
+  'Organiser une soirée cocooning avec une playlist douce et une lumière tamisée',
+  'Écrire chacun trois petites attentions qui feraient plaisir cette semaine',
+  'Explorer les caresses et les bisous, en respectant immédiatement chaque limite'
+];
+
+function buildDeck(userTexts: string[], periodFriendly: boolean): FantasyCard[] {
   const userCards: FantasyCard[] = userTexts.map((text, i) => ({
     id: `user-${i}-${Date.now()}`,
     text,
     isUserSubmitted: true,
   }));
 
-  const systemPool = shuffle(systemFantasies);
-  const systemCount = Math.max(userCards.length * SYSTEM_PER_USER, 10);
+  const systemPool = periodFriendly
+    ? shuffle(periodFriendlyFantasies).map((text, index) => ({ id: index + 1, text }))
+    : shuffle(systemFantasies);
+  const systemCount = Math.min(Math.max(userCards.length * SYSTEM_PER_USER, 10), systemPool.length);
   const systemCards: FantasyCard[] = systemPool.slice(0, systemCount).map(s => ({
     id: `sys-${s.id}`,
     text: s.text,
@@ -99,6 +114,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
   const [p1Name, setP1Name] = useState('');
   const [p2Name, setP2Name] = useState('');
+  const [periodFriendly, setPeriodFriendly] = useState(false);
 
   const [inputTurn, setInputTurn] = useState<1 | 2>(1);
   const [p1Fantasies, setP1Fantasies] = useState<string[]>([]);
@@ -178,7 +194,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
   // ── Start voting ───────────────────────────────────────────────────────────
 
   const startVoting = () => {
-    const deck = buildDeck([...p1Fantasies, ...p2Fantasies]);
+    const deck = buildDeck([...p1Fantasies, ...p2Fantasies], periodFriendly);
     const state: CoupleGameState = {
       player1Name: p1Name.trim(),
       player2Name: p2Name.trim(),
@@ -264,6 +280,7 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
     setPhase('setup');
     setP1Name('');
     setP2Name('');
+    setPeriodFriendly(false);
     setP1Fantasies([]);
     setP2Fantasies([]);
     setCurrentInput(['']);
@@ -312,6 +329,15 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
                 Chaque joueur saisit ses fantasmes en privé. L'application les mélange avec ses propres propositions et vous les soumet anonymement, un par un.
               </p>
             </div>
+
+            <button
+              onClick={() => setPeriodFriendly(value => !value)}
+              className={`w-full p-4 rounded-2xl border text-left transition-colors ${periodFriendly ? 'border-pink-400/60 bg-pink-500/15' : 'border-slate-700/50 bg-slate-800/60'}`}
+            >
+              <p className="text-white font-semibold text-sm">Pas en forme aujourd'hui ?</p>
+              <p className="text-slate-400 text-xs mt-1">Propositions réconfortantes et sans pression, à adapter selon vos envies.</p>
+              <p className="text-pink-300 text-xs mt-2 font-semibold">{periodFriendly ? 'Mode douceur activé' : 'Activer le mode douceur'}</p>
+            </button>
 
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50 space-y-4">
               <h3 className="text-slate-300 text-sm font-semibold uppercase tracking-widest">Joueurs</h3>

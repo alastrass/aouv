@@ -19,6 +19,7 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
   });
   
   const [currentPosition, setCurrentPosition] = useState<KarmaSutraPosition | null>(null);
+  const [periodFriendly, setPeriodFriendly] = useState(false);
   const [showWarning, setShowWarning] = useState(false);
   const [showPositionSelector, setShowPositionSelector] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -43,14 +44,17 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
 
   // Get next random position
   const getNextPosition = (): KarmaSutraPosition => {
-    const availablePositions = karmaSutraPositions.filter(
-      (_, index) => !session.usedPositions.includes(index)
+    const positionPool = periodFriendly
+      ? karmaSutraPositions.filter(position => [1, 4, 15, 20].includes(position.id))
+      : karmaSutraPositions;
+    const availablePositions = positionPool.filter(
+      position => !session.usedPositions.includes(karmaSutraPositions.findIndex(item => item.id === position.id))
     );
     
     if (availablePositions.length === 0) {
       // Reset if all positions used
       setSession(prev => ({ ...prev, usedPositions: [] }));
-      return karmaSutraPositions[Math.floor(Math.random() * karmaSutraPositions.length)];
+      return positionPool[Math.floor(Math.random() * positionPool.length)];
     }
     
     const randomIndex = Math.floor(Math.random() * availablePositions.length);
@@ -223,6 +227,14 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
                   <p className="text-orange-200 text-sm mt-2">
                     Explorez l'art de l'amour ensemble
                   </p>
+                  <button
+                    onClick={() => setPeriodFriendly(value => !value)}
+                    className={`mt-5 w-full rounded-xl border p-4 text-left transition-colors ${periodFriendly ? 'border-pink-400/60 bg-pink-500/15' : 'border-orange-500/30 bg-slate-800/40'}`}
+                  >
+                    <p className="text-white font-semibold text-sm">Pas en forme aujourd'hui ?</p>
+                    <p className="text-orange-200/80 text-xs mt-1">Positions confortables et douces, sans pression.</p>
+                    <p className="text-pink-300 text-xs mt-2 font-semibold">{periodFriendly ? 'Mode douceur activé' : 'Activer le mode douceur'}</p>
+                  </button>
                 </div>
                 <Heart className="w-12 h-12 text-red-400" />
               </div>
@@ -272,7 +284,7 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
 
             <div className="text-center mt-6">
               <p className="text-orange-300 text-xs">
-                {karmaSutraPositions.length} positions disponibles
+                {(periodFriendly ? karmaSutraPositions.filter(position => [1, 4, 15, 20].includes(position.id)) : karmaSutraPositions).length} positions disponibles
               </p>
             </div>
           </div>
@@ -447,7 +459,10 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
                 </div>
                 
                 <div className="overflow-y-auto max-h-96 space-y-3">
-                  {karmaSutraPositions.map((position, index) => (
+                  {(periodFriendly ? karmaSutraPositions.filter(position => [1, 4, 15, 20].includes(position.id)) : karmaSutraPositions).map((position) => (
+                    (() => {
+                      const index = karmaSutraPositions.findIndex(item => item.id === position.id);
+                      return (
                     <button
                       key={position.id}
                       onClick={() => jumpToPosition(index)}
@@ -518,6 +533,8 @@ const KarmaSutraGame: React.FC<KarmaSutraGameProps> = ({ onBack }) => {
                         </div>
                       )}
                     </button>
+                      );
+                    })()
                   ))}
                 </div>
                 

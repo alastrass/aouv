@@ -39,6 +39,7 @@ export interface Challenge {
   category: Category;
   text: string;
   isCustom?: boolean;
+  periodFriendly?: boolean;
 }
 
 export interface CustomChallengeInput {
@@ -81,6 +82,7 @@ export interface KarmaSutraPosition {
   imageUrl: string;
   difficulty: 'easy' | 'medium' | 'hard';
   duration: number;
+  periodFriendly?: boolean;
 }
 
 export interface KarmaSutraSession {

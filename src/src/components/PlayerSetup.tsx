@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Users, Settings, Plus, Trash2, Heart, Zap } from 'lucide-react';
+import { Users, Settings, Plus, Trash2, Heart, Zap, HeartPulse } from 'lucide-react';
 import { Player, Category, Challenge, CustomChallengeInput } from '../types';
 import PrizeDefinition from './PrizeDefinition';
 import TargetScoreSetup from './TargetScoreSetup';
 
 interface PlayerSetupProps {
-  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number | string, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }) => void;
+  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number | string, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }, periodFriendly?: boolean) => void;
   initialCustomChallenges?: Challenge[];
   gameType?: 'truth-or-dare' | 'stop-tergiverser';
   onBack?: () => void;
@@ -24,6 +24,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
     text: ''
   });
   const [showCustomForm, setShowCustomForm] = useState(false);
+  const [periodFriendly, setPeriodFriendly] = useState(false);
   const [targetScore, setTargetScore] = useState<number | string>(10);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
 
@@ -65,7 +66,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
         { id: 1, name: player1Name.trim(), score: 0 },
         { id: 2, name: player2Name.trim(), score: 0 }
       ];
-      onComplete(players, category, customChallenges, targetScore, prizes);
+      onComplete(players, category, customChallenges, targetScore, prizes, periodFriendly);
     }
   };
 
@@ -190,6 +191,33 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 </p>
               </button>
             </div>
+          </div>
+
+          {/* Not Feeling Well / Period-Friendly Toggle */}
+          <div className="mb-8">
+            <button
+              onClick={() => setPeriodFriendly(!periodFriendly)}
+              className={`w-full p-5 rounded-xl border-2 transition-all duration-300 flex items-center gap-4 ${
+                periodFriendly
+                  ? 'border-pink-400 bg-pink-500/20'
+                  : 'border-purple-500/30 bg-slate-700/50 hover:border-pink-400/50'
+              }`}
+            >
+              <HeartPulse className={`w-7 h-7 mx-auto shrink-0 ${periodFriendly ? 'text-pink-400' : 'text-purple-400'}`} />
+              <div className="text-left flex-1">
+                <h3 className="text-white font-semibold mb-1">Pas en forme aujourd'hui ?</h3>
+                <p className="text-purple-200 text-sm">
+                  Mode tendresse : défis doux, massages, câlins et intimité sans pénétration, parfait quand elle a ses règles ou est fatiguée
+                </p>
+              </div>
+              <div className={`w-12 h-6 rounded-full transition-colors duration-300 relative shrink-0 ${
+                periodFriendly ? 'bg-pink-500' : 'bg-slate-600'
+              }`}>
+                <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white transition-all duration-300 ${
+                  periodFriendly ? 'left-6' : 'left-0.5'
+                }`} />
+              </div>
+            </button>
           </div>
 
           {/* Custom Challenges */}

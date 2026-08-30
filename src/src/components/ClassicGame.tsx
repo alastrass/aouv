@@ -55,6 +55,7 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
   const [playerNames, setPlayerNames] = useState<string[]>(['', '']);
   const [playerAvatars, setPlayerAvatars] = useState<string[]>([AVATARS[0], AVATARS[1]]);
   const [difficulty, setDifficulty] = useState<ClassicDifficulty>('soft');
+  const [periodFriendly, setPeriodFriendly] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [shakeDiff, setShakeDiff] = useState<ClassicDifficulty | null>(null);
 
@@ -155,8 +156,8 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
 
   // ── Challenge logic ────────────────────────────────────────────────────────
   const getPool = (type: 'truth' | 'dare'): ClassicChallenge[] => {
-    const base = classicChallenges[difficulty].filter(c => c.type === type);
-    const custom = turnCount >= 2
+    const base = classicChallenges[periodFriendly ? 'soft' : difficulty].filter(c => c.type === type);
+    const custom = turnCount >= 2 && !periodFriendly
       ? customPool.filter(c => c.type === type && c.difficulty === difficulty)
       : [];
     return [...base, ...custom].filter(c => !usedIds.includes(c.id));
@@ -166,9 +167,9 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
     setChoiceType(type);
     let pool = getPool(type);
     if (pool.length === 0) {
-      const baseIds = classicChallenges[difficulty].filter(c => c.type === type).map(c => c.id);
+      const baseIds = classicChallenges[periodFriendly ? 'soft' : difficulty].filter(c => c.type === type).map(c => c.id);
       setUsedIds(prev => prev.filter(id => !baseIds.includes(id)));
-      pool = classicChallenges[difficulty].filter(c => c.type === type);
+      pool = classicChallenges[periodFriendly ? 'soft' : difficulty].filter(c => c.type === type);
     }
     const challenge = pickRandom(pool);
     setCurrentChallenge(challenge);
@@ -421,6 +422,15 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
             </div>
 
             {/* Players */}
+            <button
+              onClick={() => setPeriodFriendly(value => !value)}
+              className={`w-full p-4 rounded-2xl border text-left transition-colors ${periodFriendly ? 'border-pink-400/60 bg-pink-500/15' : 'border-slate-700/50 bg-slate-800/60'}`}
+            >
+              <p className="text-white font-semibold text-sm">Pas en forme aujourd'hui ?</p>
+              <p className="text-slate-400 text-xs mt-1">Questions douces, câlins et petits défis de bien-être, sans pression.</p>
+              <p className="text-pink-300 text-xs mt-2 font-semibold">{periodFriendly ? 'Mode douceur activé' : 'Activer le mode douceur'}</p>
+            </button>
+
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50">
               <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-widest mb-4">Joueurs</h2>
               <div className="space-y-3">
