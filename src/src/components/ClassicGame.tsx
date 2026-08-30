@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   ArrowLeft, Plus, Flame, Zap, Snowflake, Star,
-  ThumbsUp, ThumbsDown, Send, RotateCcw, Trophy, Lock, Crown
+  ThumbsUp, ThumbsDown, Send, RotateCcw, Trophy, Lock, Crown, Timer
 } from 'lucide-react';
 import {
   ClassicPlayer, ClassicChallenge, ClassicDifficulty,
   ClassicGamePhase, PendingSubmission
 } from '../types';
 import { classicChallenges } from '../data/classicChallenges';
+import { parseDurationSeconds } from '../utils/challengeTimer';
+import ChallengeStopwatch from './ChallengeStopwatch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -56,6 +58,7 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
   const [playerAvatars, setPlayerAvatars] = useState<string[]>([AVATARS[0], AVATARS[1]]);
   const [difficulty, setDifficulty] = useState<ClassicDifficulty>('soft');
   const [periodFriendly, setPeriodFriendly] = useState(false);
+  const [autoTimer, setAutoTimer] = useState(false);
   const [isPremium, setIsPremium] = useState(false);
   const [shakeDiff, setShakeDiff] = useState<ClassicDifficulty | null>(null);
 
@@ -431,6 +434,18 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
               <p className="text-pink-300 text-xs mt-2 font-semibold">{periodFriendly ? 'Mode douceur activé' : 'Activer le mode douceur'}</p>
             </button>
 
+            <button
+              onClick={() => setAutoTimer(value => !value)}
+              className={`w-full p-4 rounded-2xl border text-left transition-colors ${autoTimer ? 'border-sky-400/60 bg-sky-500/15' : 'border-slate-700/50 bg-slate-800/60'}`}
+            >
+              <div className="flex items-center gap-2">
+                <Timer className={`w-4 h-4 ${autoTimer ? 'text-sky-300' : 'text-slate-400'}`} />
+                <p className="text-white font-semibold text-sm">Chronomètre automatique</p>
+              </div>
+              <p className="text-slate-400 text-xs mt-1">Démarre un chrono pour les défis chronométrés et émet un bip pendant les 10 dernières secondes.</p>
+              <p className="text-sky-300 text-xs mt-2 font-semibold">{autoTimer ? 'Chrono auto activé' : 'Activer le chrono auto'}</p>
+            </button>
+
             <div className="bg-slate-800/60 rounded-2xl p-5 border border-slate-700/50">
               <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-widest mb-4">Joueurs</h2>
               <div className="space-y-3">
@@ -643,6 +658,14 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
               <p className="text-white text-xl sm:text-2xl leading-relaxed font-medium text-center">
                 {currentChallenge.text}
               </p>
+
+              {autoTimer && parseDurationSeconds(currentChallenge.text) && (
+                <ChallengeStopwatch
+                  key={currentChallenge.id}
+                  durationSeconds={parseDurationSeconds(currentChallenge.text)!}
+                  autoStart
+                />
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">

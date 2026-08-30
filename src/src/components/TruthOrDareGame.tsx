@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Heart, Users, Trophy, RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
 import { GameState, Player, Challenge, Category } from '../types';
 import { challenges, periodFriendlyChallenges } from '../data/challenges';
+import { parseDurationSeconds } from '../utils/challengeTimer';
 import PlayerSetup from './PlayerSetup';
 import GameBoard from './GameBoard';
 import WheelSpinner from './WheelSpinner';
+import ChallengeStopwatch from './ChallengeStopwatch';
 import ScoreBoard from './ScoreBoard';
 
 interface TruthOrDareGameProps {
@@ -26,6 +28,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
   const [turnCount, setTurnCount] = useState(0);
   const [periodFriendly, setPeriodFriendly] = useState(false);
+  const [autoTimer, setAutoTimer] = useState(false);
 
   // Load data from localStorage
   useEffect(() => {
@@ -82,12 +85,14 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     customs: Challenge[],
     setupTargetScore?: number | string,
     setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
-    setupPeriodFriendly?: boolean
+    setupPeriodFriendly?: boolean,
+    setupAutoTimer?: boolean
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setPeriodFriendly(Boolean(setupPeriodFriendly));
+    setAutoTimer(Boolean(setupAutoTimer));
     setGameState('playing');
   };
 
@@ -166,6 +171,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setCurrentPlayerIndex(0);
     setCategory('soft');
     setPeriodFriendly(false);
+    setAutoTimer(false);
     setCurrentChallenge(null);
     setUsedChallenges([]);
     setCustomChallenges([]);
@@ -218,7 +224,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
                 <h1 className="text-xl sm:text-2xl font-bold text-white">Action ou Vérité</h1>
                 <Heart className="w-6 h-6 text-rose-400" />
               </div>
-              <p className="text-purple-200 text-sm">{periodFriendly ? 'Mode Pas en forme' : `Mode ${category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'}`}</p>
+              <p className="text-purple-200 text-sm">{periodFriendly ? 'Mode Pas en forme' : `Mode ${category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'}`}{autoTimer ? ' · Chrono auto' : ''}</p>
             </div>
             
             <div className="w-16"></div>
@@ -251,6 +257,17 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
               isSpinning={isSpinning}
               category={category}
             />
+          )}
+
+          {/* Auto Stopwatch for timed challenges */}
+          {currentChallenge && autoTimer && parseDurationSeconds(currentChallenge.text) && (
+            <div className="max-w-2xl mx-auto px-2 sm:px-0 mb-6">
+              <ChallengeStopwatch
+                key={currentChallenge.id}
+                durationSeconds={parseDurationSeconds(currentChallenge.text)!}
+                autoStart
+              />
+            </div>
           )}
 
           {/* Game Board */}

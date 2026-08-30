@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
 import { Player, Challenge, Category } from '../types';
 import { challenges, periodFriendlyChallenges } from '../data/challenges';
+import { parseDurationSeconds } from '../utils/challengeTimer';
 import PlayerSetup from './PlayerSetup';
 import IntensitySpinner from './IntensitySpinner';
 import ScoreBoard from './ScoreBoard';
+import ChallengeStopwatch from './ChallengeStopwatch';
 
 interface StopTergiverserGameProps {
   onBack: () => void;
@@ -25,6 +27,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [customChallenges, setCustomChallenges] = useState<Challenge[]>([]);
   const [turnCount, setTurnCount] = useState(0);
   const [periodFriendly, setPeriodFriendly] = useState(false);
+  const [autoTimer, setAutoTimer] = useState(false);
   const isSpeedExtreme = category === 'speed-extreme';
 
   useEffect(() => {
@@ -80,12 +83,14 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     customs: Challenge[],
     setupTargetScore?: number | string,
     setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
-    setupPeriodFriendly?: boolean
+    setupPeriodFriendly?: boolean,
+    setupAutoTimer?: boolean
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setPeriodFriendly(Boolean(setupPeriodFriendly));
+    setAutoTimer(Boolean(setupAutoTimer));
     setGameState('playing');
   };
 
@@ -234,6 +239,14 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                 <p className="text-white text-lg sm:text-xl leading-relaxed text-center mb-6 sm:mb-8 px-2">
                   {currentChallenge.text}
                 </p>
+
+                {autoTimer && parseDurationSeconds(currentChallenge.text) && (
+                  <ChallengeStopwatch
+                    key={currentChallenge.id}
+                    durationSeconds={parseDurationSeconds(currentChallenge.text)!}
+                    autoStart
+                  />
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
                   <button
