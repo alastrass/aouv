@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AppState, GameType, Player } from './types';
 import WelcomeScreen from './components/WelcomeScreen';
 import AgeVerification from './components/AgeVerification';
@@ -10,7 +10,6 @@ import PuzzleGame from './components/PuzzleGame';
 import StopTergiverserGame from './components/StopTergiverserGame';
 import PaymentStore from './components/PaymentStore';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
-import PlayerSetup from './components/PlayerSetup';
 import GameOverScreen from './components/GameOverScreen';
 import PresentationGuide from './components/PresentationGuide';
 import ClassicGame from './components/ClassicGame';
@@ -19,7 +18,6 @@ import CoupleGame from './components/CoupleGame';
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [isAgeVerified, setIsAgeVerified] = useState(false);
-  const [currentGame, setCurrentGame] = useState<GameType | null>(null);
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [targetScore, setTargetScore] = useState<number | string | null>(null);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } } | null>(null);
@@ -32,18 +30,15 @@ function App() {
   };
 
   const handleGameSelection = (gameType: GameType) => {
-    setCurrentGame(gameType);
     setAppState(gameType);
   };
 
   const handleBackToGameSelection = () => {
-    setCurrentGame(null);
     setAppState('game-selection');
   };
 
   const handleBackToWelcome = () => {
     setIsAgeVerified(false);
-    setCurrentGame(null);
     setAppState('welcome');
   };
 
@@ -63,22 +58,14 @@ function App() {
     setAppState('guide');
   };
 
-  const handlePlayerSetupComplete = (
-    players: Player[],
-    category: string,
-    customChallenges: any[],
-    targetScore: number | string,
-    prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
+  const handleGameOver = (
+    finalPlayers?: Player[],
+    finalTargetScore?: number | string,
+    finalPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => {
-    setPlayers(players);
-    setTargetScore(targetScore);
-    setPrizes(prizes);
-    if (currentGame) {
-      setAppState(currentGame);
-    }
-  };
-
-  const handleGameOver = () => {
+    if (finalPlayers) setPlayers(finalPlayers);
+    if (finalTargetScore !== undefined) setTargetScore(finalTargetScore);
+    if (finalPrizes) setPrizes(finalPrizes);
     setAppState('game-over');
   };
 
@@ -104,7 +91,7 @@ function App() {
   }
 
   if (appState === 'truth-or-dare') {
-    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} targetScore={targetScore} prizes={prizes} />;
+    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} />;
   }
 
   if (appState === 'kiffe-ou-kiffe-pas') {
@@ -128,7 +115,7 @@ function App() {
   }
 
   if (appState === 'stop-tergiverser') {
-    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} targetScore={targetScore} prizes={prizes} />;
+    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} />;
   }
 
   if (appState === 'game-over') {
@@ -158,7 +145,7 @@ function App() {
     );
   }
 
-  return <PlayerSetup onComplete={handlePlayerSetupComplete} />;
+  return null;
 }
 
 export default App;

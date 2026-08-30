@@ -20,3 +20,28 @@ export function parseDurationSeconds(text: string): number | null {
 
   return null;
 }
+
+// Challenges that require physical preparation before the timer can start:
+// bondage, blindfolding, stripping, getting into position, etc.
+const PREPARATION_KEYWORDS = [
+  'attache',
+  'bande les yeux',
+  'bande-lui les yeux',
+  'immobilise',
+  'menotte',
+  'plaque',
+  'mets-toi à quatre pattes',
+  'allonge',
+  'retire un vêtement',
+  'strip-tease',
+  'mets dans une position',
+  'soumets',
+  'impose une position',
+  'retourne',
+];
+
+export function requiresPreparation(text: string): boolean {
+  if (!text) return false;
+  const lower = text.toLowerCase();
+  return PREPARATION_KEYWORDS.some(kw => lower.includes(kw));
+}

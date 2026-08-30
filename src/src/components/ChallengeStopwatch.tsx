@@ -182,6 +182,12 @@ const ChallengeStopwatch: React.FC<ChallengeStopwatchProps> = ({ durationSeconds
         </div>
       </div>
 
+      {!autoStart && !running && !finished && (
+        <p className="mt-3 text-center text-sky-300 text-sm font-medium">
+          Préparez-vous, puis lancez le chrono quand vous êtes prêt.
+        </p>
+      )}
+
       {finished && (
         <p className="mt-3 text-center text-emerald-300 text-sm font-medium">
           Temps écoulé ! Le défi est relevé.

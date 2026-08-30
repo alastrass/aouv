@@ -8,7 +8,7 @@ import {
   ClassicGamePhase, PendingSubmission
 } from '../types';
 import { classicChallenges } from '../data/classicChallenges';
-import { parseDurationSeconds } from '../utils/challengeTimer';
+import { parseDurationSeconds, requiresPreparation } from '../utils/challengeTimer';
 import ChallengeStopwatch from './ChallengeStopwatch';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -663,7 +663,7 @@ const ClassicGame: React.FC<ClassicGameProps> = ({ onBack, onOpenStore }) => {
                 <ChallengeStopwatch
                   key={currentChallenge.id}
                   durationSeconds={parseDurationSeconds(currentChallenge.text)!}
-                  autoStart
+                  autoStart={!requiresPreparation(currentChallenge.text)}
                 />
               )}
             </div>

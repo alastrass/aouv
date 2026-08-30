@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
-import { Player, Challenge, Category } from '../types';
+import { Player, Challenge, Category, Orientation } from '../types';
 import { challenges, periodFriendlyChallenges } from '../data/challenges';
-import { parseDurationSeconds } from '../utils/challengeTimer';
+import { gayChallenges, lesbianChallenges } from '../data/orientationChallenges';
+import { parseDurationSeconds, requiresPreparation } from '../utils/challengeTimer';
 import PlayerSetup from './PlayerSetup';
 import IntensitySpinner from './IntensitySpinner';
 import ScoreBoard from './ScoreBoard';
@@ -10,12 +11,14 @@ import ChallengeStopwatch from './ChallengeStopwatch';
 
 interface StopTergiverserGameProps {
   onBack: () => void;
-  onGameOver?: () => void;
-  targetScore?: number | string | null;
-  prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
+  onGameOver?: (
+    players: Player[],
+    targetScore: number | string,
+    prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
+  ) => void;
 }
 
-const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver, targetScore, prizes }) => {
+const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver }) => {
   const [gameState, setGameState] = useState<'setup' | 'playing'>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -28,6 +31,9 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [turnCount, setTurnCount] = useState(0);
   const [periodFriendly, setPeriodFriendly] = useState(false);
   const [autoTimer, setAutoTimer] = useState(false);
+  const [orientation, setOrientation] = useState<Orientation>('mixed');
+  const [targetScore, setTargetScore] = useState<number | string>(10);
+  const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
   const isSpeedExtreme = category === 'speed-extreme';
 
   useEffect(() => {
@@ -72,10 +78,10 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     if (targetScore && players.length > 0 && gameState === 'playing') {
       const winner = players.find(p => typeof targetScore === 'number' ? p.score >= targetScore : p.score >= 2);
       if (winner && onGameOver) {
-        onGameOver();
+        onGameOver(players, targetScore, prizes);
       }
     }
-  }, [players, targetScore, gameState, onGameOver]);
+  }, [players, targetScore, gameState, onGameOver, prizes]);
 
   const handlePlayersSetup = (
     setupPlayers: Player[],
@@ -84,20 +90,24 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
     setupTargetScore?: number | string,
     setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
     setupPeriodFriendly?: boolean,
-    setupAutoTimer?: boolean
+    setupAutoTimer?: boolean,
+    setupOrientation?: Orientation
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setPeriodFriendly(Boolean(setupPeriodFriendly));
     setAutoTimer(Boolean(setupAutoTimer));
+    if (setupOrientation) setOrientation(setupOrientation);
+    if (setupTargetScore !== undefined) setTargetScore(setupTargetScore);
+    if (setupPrizes) setPrizes(setupPrizes);
     setGameState('playing');
   };
 
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = periodFriendly
       ? periodFriendlyChallenges.filter(challenge => challenge.type === 'dare')
-      : challenges[category].filter(challenge => challenge.type === 'dare');
+      : (orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category].filter(challenge => challenge.type === 'dare');
     if (turnCount >= 2 && !periodFriendly) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
     }
@@ -244,7 +254,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                   <ChallengeStopwatch
                     key={currentChallenge.id}
                     durationSeconds={parseDurationSeconds(currentChallenge.text)!}
-                    autoStart
+                    autoStart={!requiresPreparation(currentChallenge.text)}
                   />
                 )}
 

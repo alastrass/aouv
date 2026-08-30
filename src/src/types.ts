@@ -19,6 +19,8 @@ export type GameState = 'setup' | 'playing';
 
 export type Category = 'soft' | 'intense' | 'speed-extreme';
 
+export type Orientation = 'mixed' | 'gay' | 'lesbian';
+
 export type SwipeDirection = 'left' | 'right';
 
 export type KiffeGameState = 'setup' | 'playing' | 'results';

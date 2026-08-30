@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Users, Trophy, RotateCcw, Check, X, ArrowLeft } from 'lucide-react';
-import { GameState, Player, Challenge, Category } from '../types';
+import { GameState, Player, Challenge, Category, Orientation } from '../types';
 import { challenges, periodFriendlyChallenges } from '../data/challenges';
-import { parseDurationSeconds } from '../utils/challengeTimer';
+import { gayChallenges, lesbianChallenges } from '../data/orientationChallenges';
+import { parseDurationSeconds, requiresPreparation } from '../utils/challengeTimer';
 import PlayerSetup from './PlayerSetup';
 import GameBoard from './GameBoard';
 import WheelSpinner from './WheelSpinner';
@@ -11,12 +12,14 @@ import ScoreBoard from './ScoreBoard';
 
 interface TruthOrDareGameProps {
   onBack: () => void;
-  onGameOver?: () => void;
-  targetScore?: number | string | null;
-  prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
+  onGameOver?: (
+    players: Player[],
+    targetScore: number | string,
+    prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
+  ) => void;
 }
 
-const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, targetScore, prizes }) => {
+const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver }) => {
   const [gameState, setGameState] = useState<GameState>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -29,6 +32,9 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
   const [turnCount, setTurnCount] = useState(0);
   const [periodFriendly, setPeriodFriendly] = useState(false);
   const [autoTimer, setAutoTimer] = useState(false);
+  const [orientation, setOrientation] = useState<Orientation>('mixed');
+  const [targetScore, setTargetScore] = useState<number | string>(10);
+  const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
 
   // Load data from localStorage
   useEffect(() => {
@@ -74,10 +80,10 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     if (targetScore && players.length > 0 && gameState === 'playing') {
       const winner = players.find(p => typeof targetScore === 'number' ? p.score >= targetScore : p.score >= 2);
       if (winner && onGameOver) {
-        onGameOver();
+        onGameOver(players, targetScore, prizes);
       }
     }
-  }, [players, targetScore, gameState, onGameOver]);
+  }, [players, targetScore, gameState, onGameOver, prizes]);
 
   const handlePlayersSetup = (
     setupPlayers: Player[],
@@ -86,20 +92,24 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setupTargetScore?: number | string,
     setupPrizes?: { [playerId: number]: { prize: string; isVisible: boolean } },
     setupPeriodFriendly?: boolean,
-    setupAutoTimer?: boolean
+    setupAutoTimer?: boolean,
+    setupOrientation?: Orientation
   ) => {
     setPlayers(setupPlayers);
     setCategory(selectedCategory);
     setCustomChallenges(customs);
     setPeriodFriendly(Boolean(setupPeriodFriendly));
     setAutoTimer(Boolean(setupAutoTimer));
+    if (setupOrientation) setOrientation(setupOrientation);
+    if (setupTargetScore !== undefined) setTargetScore(setupTargetScore);
+    if (setupPrizes) setPrizes(setupPrizes);
     setGameState('playing');
   };
 
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = periodFriendly
       ? periodFriendlyChallenges.filter(challenge => challenge.type === 'truth' || challenge.type === 'dare')
-      : challenges[category];
+      : (orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category];
     if (turnCount >= 2) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
     }
@@ -172,6 +182,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
     setCategory('soft');
     setPeriodFriendly(false);
     setAutoTimer(false);
+    setOrientation('mixed');
     setCurrentChallenge(null);
     setUsedChallenges([]);
     setCustomChallenges([]);
@@ -265,7 +276,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, t
               <ChallengeStopwatch
                 key={currentChallenge.id}
                 durationSeconds={parseDurationSeconds(currentChallenge.text)!}
-                autoStart
+                autoStart={!requiresPreparation(currentChallenge.text)}
               />
             </div>
           )}

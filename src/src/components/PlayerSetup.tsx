@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Users, Settings, Plus, Trash2, Heart, Zap, HeartPulse, Timer } from 'lucide-react';
-import { Player, Category, Challenge, CustomChallengeInput } from '../types';
+import { Player, Category, Challenge, CustomChallengeInput, Orientation } from '../types';
 import PrizeDefinition from './PrizeDefinition';
 import TargetScoreSetup from './TargetScoreSetup';
 
 interface PlayerSetupProps {
-  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number | string, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }, periodFriendly?: boolean, autoTimer?: boolean) => void;
+  onComplete: (players: Player[], category: Category, customChallenges: Challenge[], targetScore: number | string, prizes: { [playerId: number]: { prize: string; isVisible: boolean } }, periodFriendly?: boolean, autoTimer?: boolean, orientation?: Orientation) => void;
   initialCustomChallenges?: Challenge[];
   gameType?: 'truth-or-dare' | 'stop-tergiverser';
   onBack?: () => void;
@@ -26,6 +26,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [periodFriendly, setPeriodFriendly] = useState(false);
   const [autoTimer, setAutoTimer] = useState(false);
+  const [orientation, setOrientation] = useState<Orientation>('mixed');
   const [targetScore, setTargetScore] = useState<number | string>(10);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
 
@@ -67,7 +68,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
         { id: 1, name: player1Name.trim(), score: 0 },
         { id: 2, name: player2Name.trim(), score: 0 }
       ];
-      onComplete(players, category, customChallenges, targetScore, prizes, periodFriendly, autoTimer);
+      onComplete(players, category, customChallenges, targetScore, prizes, periodFriendly, autoTimer, orientation);
     }
   };
 
@@ -190,6 +191,46 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 <p className="text-purple-200 text-sm">
                   Défis très hard enchaînés à un rythme ultra-rapide, sans temps mort
                 </p>
+              </button>
+            </div>
+          </div>
+
+          {/* Orientation Selection */}
+          <div className="mb-8">
+            <h2 className="text-xl font-semibold text-white mb-4">Orientation</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <button
+                onClick={() => setOrientation('mixed')}
+                className={`p-5 rounded-xl border-2 transition-all duration-300 ${
+                  orientation === 'mixed'
+                    ? 'border-purple-400 bg-purple-500/20'
+                    : 'border-purple-500/30 bg-slate-700/50 hover:border-purple-400/50'
+                }`}
+              >
+                <h3 className="text-white font-semibold mb-1">Mixte</h3>
+                <p className="text-purple-200 text-sm">Contenu hétérosexuel, questions universelles</p>
+              </button>
+              <button
+                onClick={() => setOrientation('gay')}
+                className={`p-5 rounded-xl border-2 transition-all duration-300 ${
+                  orientation === 'gay'
+                    ? 'border-sky-400 bg-sky-500/20'
+                    : 'border-purple-500/30 bg-slate-700/50 hover:border-sky-400/50'
+                }`}
+              >
+                <h3 className="text-white font-semibold mb-1">Gay</h3>
+                <p className="text-purple-200 text-sm">Questions et défis adaptés pour deux hommes</p>
+              </button>
+              <button
+                onClick={() => setOrientation('lesbian')}
+                className={`p-5 rounded-xl border-2 transition-all duration-300 ${
+                  orientation === 'lesbian'
+                    ? 'border-pink-400 bg-pink-500/20'
+                    : 'border-purple-500/30 bg-slate-700/50 hover:border-pink-400/50'
+                }`}
+              >
+                <h3 className="text-white font-semibold mb-1">Lesbienne</h3>
+                <p className="text-purple-200 text-sm">Questions et défis adaptés pour deux femmes</p>
               </button>
             </div>
           </div>
