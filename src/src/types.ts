@@ -9,13 +9,14 @@ export type AppState =
   | 'karma-sutra'
   | 'puzzle'
   | 'stop-tergiverser'
+  | 'cap-ou-pas-cap'
   | 'classic'
   | 'couple'
   | 'store'
   | 'guide'
   | 'game-over';
 
-export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser';
+export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser' | 'cap-ou-pas-cap';
 
 export type GameState = 'setup' | 'playing';
 
@@ -30,6 +31,29 @@ export type KiffeGameState = 'setup' | 'playing' | 'results';
 export type KarmaSutraGameState = 'setup' | 'playing' | 'paused';
 
 export type PuzzleGameState = 'session-setup' | 'image-selection' | 'waiting-player' | 'playing' | 'completed';
+
+// ── Cap ou Pas Cap ─────────────────────────────────────────────────────────────
+
+export type CapOuPasCapPhase = 'setup' | 'playing';
+
+export type CapIntensity = 'romantique' | 'coquin' | 'chaud' | 'extreme';
+
+export interface CapChallenge {
+  id: number;
+  intensity: CapIntensity;
+  text: string;
+  timed: boolean;
+  durationSeconds?: number;
+}
+
+export interface CapHistoryEntry {
+  challengeId: number;
+  text: string;
+  intensity: CapIntensity;
+  result: 'releve' | 'forfait';
+  playerName: string;
+  timestamp: number;
+}
 
 export interface PuzzleDifficulty {
   gridSize: number;

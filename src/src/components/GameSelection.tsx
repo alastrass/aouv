@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers } from 'lucide-react';
 import { GameType } from '../types';
 
 interface GameSelectionProps {
@@ -66,6 +66,17 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
       icon: Heart,
       color: 'from-rose-600 to-red-600',
       borderColor: 'border-rose-500/30',
+      available: true,
+      players: '2 joueurs',
+      duration: '15-30 min'
+    },
+    {
+      id: 'cap-ou-pas-cap' as GameType,
+      title: 'Cap ou pas Cap',
+      description: 'Des défis mystères à révéler carte après carte. Choisissez votre intensité, relevez le défi ou déclarez forfait, puis gardez une trace de votre session.',
+      icon: Layers,
+      color: 'from-teal-600 to-cyan-600',
+      borderColor: 'border-teal-500/30',
       available: true,
       players: '2 joueurs',
       duration: '15-30 min'

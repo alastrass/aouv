@@ -1,0 +1,78 @@
+import { CapChallenge } from '../types';
+
+export const capChallenges: CapChallenge[] = [
+  // ── Romantique ──────────────────────────────────────────────────────────────
+  { id: 9001, intensity: 'romantique', text: "Regarde ton/ta partenaire dans les yeux pendant 1 minute sans parler ni rire.", timed: true, durationSeconds: 60 },
+  { id: 9002, intensity: 'romantique', text: "Fais trois compliments sincères à ton/ta partenaire, un par catégorie : physique, caractère, sensualité.", timed: false },
+  { id: 9003, intensity: 'romantique', text: "Raconte le moment exact où tu as su que tu tombais amoureux/amoureuse de ton/ta partenaire.", timed: false },
+  { id: 9004, intensity: 'romantique', text: "Embrasse doucement le front, le nez, puis les lèvres de ton/ta partenaire.", timed: false },
+  { id: 9005, intensity: 'romantique', text: "Murmure à l'oreille de ton/ta partenaire ce que tu aimes le plus chez lui/elle.", timed: false },
+  { id: 9006, intensity: 'romantique', text: "Prends la main de ton/ta partenaire et fais-lui un massage du dos de la main pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9007, intensity: 'romantique', text: "Décris la première fois que vous vous êtes embrassés, avec le plus de détails possible.", timed: false },
+  { id: 9008, intensity: 'romantique', text: "Chuchote un souvenir heureux que tu as vécu avec ton/ta partenaire.", timed: false },
+  { id: 9009, intensity: 'romantique', text: "Fais un câlin prolongé de 2 minutes en silence, en respirant ensemble.", timed: true, durationSeconds: 120 },
+  { id: 9010, intensity: 'romantique', text: "Énumère cinq choses que tu aimerais faire avec ton/ta partenaire un jour.", timed: false },
+  { id: 9011, intensity: 'romantique', text: "Embrasse la paume de la main de ton/ta partenaire, puis chaque doigt.", timed: false },
+  { id: 9012, intensity: 'romantique', text: "Dis à ton/ta partenaire ce qui t'a attiré(e) physiquement chez lui/elle au tout début.", timed: false },
+  { id: 9013, intensity: 'romantique', text: "Fais un bisou dans le cou de ton/ta partenaire, le plus tendrement possible.", timed: false },
+  { id: 9014, intensity: 'romantique', text: "Décris ta soirée romantique idéale avec ton/ta partenaire, étape par étape.", timed: false },
+  { id: 9015, intensity: 'romantique', text: "Tiens la main de ton/ta partenaire et regarde-la/le dans les yeux pendant 30 secondes.", timed: true, durationSeconds: 30 },
+
+  // ── Coquin ──────────────────────────────────────────────────────────────────
+  { id: 9101, intensity: 'coquin', text: "Embrasse passionnément ton/ta partenaire pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9102, intensity: 'coquin', text: "Caresse le bras de ton/ta partenaire du bout des doigts, de l'épaule au poignet, pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9103, intensity: 'coquin', text: "Murmure à l'oreille de ton/ta partenaire ce que tu aimerais lui faire ce soir.", timed: false },
+  { id: 9104, intensity: 'coquin', text: "Embrasse le cou de ton/ta partenaire en remontant lentement vers l'oreille.", timed: false },
+  { id: 9105, intensity: 'coquin', text: "Caresse la nuque de ton/ta partenaire pendant 1 minute en la/le regardant.", timed: true, durationSeconds: 60 },
+  { id: 9106, intensity: 'coquin', text: "Fais glisser une main sur le dos de ton/ta partenaire par-dessus ses vêtements pendant 2 minutes.", timed: true, durationSeconds: 120 },
+  { id: 9107, intensity: 'coquin', text: "Mords doucement le lobe d'oreille de ton/ta partenaire.", timed: false },
+  { id: 9108, intensity: 'coquin', text: "Souffle sur le cou de ton/ta partenaire sans la/le toucher, pendant 30 secondes.", timed: true, durationSeconds: 30 },
+  { id: 9109, intensity: 'coquin', text: "Assieds-toi sur les genoux de ton/ta partenaire et embrasse-la/le pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9110, intensity: 'coquin', text: "Caresse l'intérieur des poignets de ton/ta partenaire, lentement, pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9111, intensity: 'coquin', text: "Fais un bisou dans le creux des reins de ton/ta partenaire par-dessus son vêtement.", timed: false },
+  { id: 9112, intensity: 'coquin', text: "Décris à ton/ta partenaire la dernière fois où tu as fantasmé sur elle/lui.", timed: false },
+  { id: 9113, intensity: 'coquin', text: "Lèche doucement les lèvres de ton/ta partenaire avant de l'embrasser.", timed: false },
+  { id: 9114, intensity: 'coquin', text: "Fais un massage des épaules à ton/ta partenaire pendant 2 minutes.", timed: true, durationSeconds: 120 },
+  { id: 9115, intensity: 'coquin', text: "Glisse une main sur la cuisse de ton/ta partenaire, sans remonter trop haut, pendant 1 minute.", timed: true, durationSeconds: 60 },
+
+  // ── Chaud ────────────────────────────────────────────────────────────────────
+  { id: 9201, intensity: 'chaud', text: "Retire un vêtement à ton/ta partenaire (au choix) en l'embrassant.", timed: false },
+  { id: 9202, intensity: 'chaud', text: "Caresse la poitrine de ton/ta partenaire sous son vêtement pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9203, intensity: 'chaud', text: "Embrasse le ventre de ton/ta partenaire en descendant lentement vers le bas.", timed: false },
+  { id: 9204, intensity: 'chaud', text: "Caresse l'intérieur des cuisses de ton/ta partenaire pendant 2 minutes, en montant lentement.", timed: true, durationSeconds: 120 },
+  { id: 9205, intensity: 'chaud', text: "Murmure à l'oreille de ton/ta partenaire exactement ce que tu veux lui faire maintenant.", timed: false },
+  { id: 9206, intensity: 'chaud', text: "Plaque ton/ta partenaire contre un mur et embrasse-la/le sauvagement pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9207, intensity: 'chaud', text: "Caresse les hanches de ton/ta partenaire sous son vêtement pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9208, intensity: 'chaud', text: "Embrasse le cou, les épaules et le haut de la poitrine de ton/ta partenaire.", timed: false },
+  { id: 9209, intensity: 'chaud', text: "Fais un striptease de 30 secondes devant ton/ta partenaire.", timed: true, durationSeconds: 30 },
+  { id: 9210, intensity: 'chaud', text: "Caresse le dos de ton/ta partenaire de la nuque aux reins, sans vêtement, pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9211, intensity: 'chaud', text: "Lèche le cou de ton/ta partenaire en descendant vers la clavicule.", timed: false },
+  { id: 9212, intensity: 'chaud', text: "Assieds-toi sur ton/ta partenaire et frotte-toi doucement contre elle/lui pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9213, intensity: 'chaud', text: "Retire ton propre haut en regardant ton/ta partenaire dans les yeux.", timed: false },
+  { id: 9214, intensity: 'chaud', text: "Caresse les fesses de ton/ta partenaire en l'embrassant pendant 1 minute.", timed: true, durationSeconds: 60 },
+  { id: 9215, intensity: 'chaud', text: "Souffle à l'oreille de ton/ta partenaire un fantasme que tu n'as jamais osé lui avouer.", timed: false },
+
+  // ── Extrême / Jeux de rôle ───────────────────────────────────────────────────
+  { id: 9301, intensity: 'extreme', text: "Incarne un inconnu qui aborde ton/ta partenaire dans un bar, et tente de la/le séduire pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9302, intensity: 'extreme', text: "Tu es le/la patron(ne), ton/ta partenaire est ton/ta employé(e) soumis(e). Donne-lui un ordre intime et fais-toi obéir pendant 2 minutes.", timed: true, durationSeconds: 120 },
+  { id: 9303, intensity: 'extreme', text: "Bandonne les yeux de ton/ta partenaire, puis caresse-la/le où tu veux pendant 2 minutes sans qu'elle/il sache où.", timed: true, durationSeconds: 120 },
+  { id: 9304, intensity: 'extreme', text: "Joue le/la médecin : examine ton/ta partenaire sensuellement pendant 2 minutes, sans retirer de vêtements.", timed: true, durationSeconds: 120 },
+  { id: 9305, intensity: 'extreme', text: "Incarne un/une photographe de charme : dirige ton/ta partenaire dans des poses de plus en plus osées pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9306, intensity: 'extreme', text: "Tu es prisonnier(ère), ton/ta partenaire est le/la gardien(ne). Négocie une faveur intime pour ta libération pendant 2 minutes.", timed: true, durationSeconds: 120 },
+  { id: 9307, intensity: 'extreme', text: "Fais un jeu de rôle maître/maîtresse et esclave : impose 3 ordres successifs que ton/ta partenaire doit exécuter.", timed: false },
+  { id: 9308, intensity: 'extreme', text: "Incarne un/une étranger(ère) rencontré(e) en voyage. Vous avez une nuit ensemble, faites comme si vous ne vous étiez jamais vus, pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9309, intensity: 'extreme', text: "Retire un vêtement à ton/ta partenaire avec les dents uniquement.", timed: false },
+  { id: 9310, intensity: 'extreme', text: "Attache les mains de ton/ta partenaire avec une écharpe, puis embrasse-la/le où tu veux pendant 2 minutes.", timed: true, durationSeconds: 120 },
+  { id: 9311, intensity: 'extreme', text: "Incarne un/une coach sportif : fais faire à ton/ta partenaire des étirements sensuels pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9312, intensity: 'extreme', text: "Tu es le/la prof, ton/ta partenaire est l'élève. Donne-lui une leçon de plaisir théorique et pratique pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9313, intensity: 'extreme', text: "Incarne une star séduisant son/ta plus grand(e) fan : fais-lui vivre son rêve pendant 3 minutes.", timed: true, durationSeconds: 180 },
+  { id: 9314, intensity: 'extreme', text: "Fais un strip-tease complet et sensuel de 3 minutes devant ton/ta partenaire.", timed: true, durationSeconds: 180 },
+  { id: 9315, intensity: 'extreme', text: "Incarne un/une détective interrogeant ton/ta partenaire : pose-lui des questions intimes de plus en plus osées pendant 3 minutes.", timed: true, durationSeconds: 180 },
+];
+
+export const capIntensityConfig: Record<CapChallenge['intensity'], { label: string; color: string; gradient: string; border: string; icon: string }> = {
+  romantique: { label: 'Romantique', color: 'text-pink-300', gradient: 'from-pink-500 to-rose-500', border: 'border-pink-500/40', icon: '♡' },
+  coquin:     { label: 'Coquin',     color: 'text-amber-300', gradient: 'from-amber-500 to-orange-500', border: 'border-amber-500/40', icon: '✦' },
+  chaud:      { label: 'Chaud',      color: 'text-red-300', gradient: 'from-red-500 to-rose-600', border: 'border-red-500/40', icon: '♥' },
+  extreme:    { label: 'Extrême',    color: 'text-purple-300', gradient: 'from-purple-600 to-fuchsia-600', border: 'border-purple-500/40', icon: '⚡' },
+};

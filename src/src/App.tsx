@@ -10,6 +10,7 @@ import KiffeOuKiffePasGame from './components/KiffeOuKiffePasGame';
 import KarmaSutraGame from './components/KarmaSutraGame';
 import PuzzleGame from './components/PuzzleGame';
 import StopTergiverserGame from './components/StopTergiverserGame';
+import CapOuPasCapGame from './components/CapOuPasCapGame';
 import PaymentStore from './components/PaymentStore';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
 import GameOverScreen from './components/GameOverScreen';
@@ -179,6 +180,10 @@ function App() {
 
   if (appState === 'stop-tergiverser') {
     return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} hasForetAccess={hasForetAccess} />;
+  }
+
+  if (appState === 'cap-ou-pas-cap') {
+    return <CapOuPasCapGame onBack={handleBackToGameSelection} />;
   }
 
   if (appState === 'game-over') {
