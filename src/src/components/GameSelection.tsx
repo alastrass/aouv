@@ -1,6 +1,7 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers, Smartphone, Download } from 'lucide-react';
 import { GameType } from '../types';
+import { usePWA } from '../hooks/usePWA';
 
 interface GameSelectionProps {
   onGameSelect: (gameType: GameType) => void;
@@ -13,6 +14,7 @@ interface GameSelectionProps {
 }
 
 const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen, onAccountOpen, isAuthenticated = false }) => {
+  const { isInstallable, isInstalled, installApp } = usePWA();
   const allGames = [
     {
       id: 'truth-or-dare' as GameType,
@@ -274,6 +276,24 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
             );
           })}
         </div>
+
+        {/* Install App Button */}
+        {isInstallable && !isInstalled && (
+          <div className="mb-8 max-w-4xl mx-auto rounded-2xl border border-teal-400/30 bg-teal-500/10 p-5 sm:p-6 flex items-start gap-4 shadow-lg">
+            <Smartphone className="w-7 h-7 text-teal-300 shrink-0 mt-0.5" />
+            <div className="text-left flex-1">
+              <h2 className="text-white font-bold text-lg">Installer l'application</h2>
+              <p className="text-teal-100/80 text-sm leading-relaxed mt-1">Ajoutez Le Temple des Plaisirs sur votre écran d'accueil pour un accès rapide, même hors connexion.</p>
+              <button
+                onClick={installApp}
+                className="mt-3 inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-500 text-white font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors mobile-button touch-action-none"
+              >
+                <Download className="w-4 h-4" />
+                Installer sur mon téléphone
+              </button>
+            </div>
+          </div>
+        )}
 
         <div className="mb-8 max-w-4xl mx-auto rounded-2xl border border-teal-400/30 bg-teal-500/10 p-5 sm:p-6 flex items-start gap-4 shadow-lg">
           <Handshake className="w-7 h-7 text-teal-300 shrink-0 mt-0.5" />

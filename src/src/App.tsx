@@ -139,7 +139,12 @@ function App() {
   }
 
   if (appState === 'game-selection') {
-    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} onAccountOpen={() => setAppState(session ? 'account' : 'auth')} isAuthenticated={Boolean(session)} />;
+    return (
+      <>
+        <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} onAccountOpen={() => setAppState(session ? 'account' : 'auth')} isAuthenticated={Boolean(session)} />
+        <PWAInstallPrompt />
+      </>
+    );
   }
 
   if (appState === 'account' && session) {
