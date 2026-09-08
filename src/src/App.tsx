@@ -66,8 +66,8 @@ function App() {
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  const hasPremiumAccess = isAdmin || purchases.some(purchase => purchase.item_id === 'intense-speed-extension');
-  const hasForetAccess = isAdmin || purchases.some(purchase => purchase.item_id === 'foret-extension');
+  const hasPremiumAccess = true;
+  const hasForetAccess = true;
 
   const handleAgeVerification = (verified: boolean) => {
     setIsAgeVerified(verified);
