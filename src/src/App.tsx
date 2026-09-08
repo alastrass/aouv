@@ -43,15 +43,19 @@ function App() {
       supabase.from('purchases').select('id,item_id,amount,currency,status,created_at').eq('status', 'completed').order('created_at', { ascending: false }),
     ]);
 
-    if (profileResult.error || purchasesResult.error) {
-      console.error('account data loading failed', profileResult.error ?? purchasesResult.error);
+    if (profileResult.error) {
+      console.error('profile loading failed', profileResult.error);
       setIsAdmin(false);
-      setPurchases([]);
-      return;
+    } else {
+      setIsAdmin(profileResult.data?.role === 'admin');
     }
 
-    setIsAdmin(profileResult.data?.role === 'admin');
-    setPurchases(purchasesResult.data ?? []);
+    if (purchasesResult.error) {
+      console.error('purchases loading failed', purchasesResult.error);
+      setPurchases([]);
+    } else {
+      setPurchases(purchasesResult.data ?? []);
+    }
   };
 
   useEffect(() => {
