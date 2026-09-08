@@ -1,69 +1,15 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   ArrowLeft, Heart, Plus, Trash2, Eye, EyeOff,
-  ChevronRight, Sparkles, Lock, CheckCircle
+  ChevronRight, Sparkles, Lock, CheckCircle, Wifi, Users
 } from 'lucide-react';
 import { CoupleGamePhase, FantasyCard, CoupleGameState } from '../types';
-import { systemFantasies } from '../data/fantasies';
+import { buildDeck } from '../utils/coupleDeck';
+import CoupleGameRemote from './CoupleGameRemote';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'couple_gameState';
-const SYSTEM_PER_USER = 2;
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-
-const periodFriendlyFantasies = [
-  'Se faire un massage des épaules et de la nuque avec une musique apaisante',
-  'Préparer une boisson chaude et se blottir ensemble sous un plaid',
-  'Prendre un bain relaxant ensemble, sans objectif autre que se détendre',
-  'Échanger un long câlin et respirer ensemble pendant quelques minutes',
-  'Se faire des compliments sincères et raconter son meilleur souvenir à deux',
-  'Regarder un film choisi ensemble, avec des caresses et des pauses câlins',
-  'Se masser les mains et les pieds à tour de rôle',
-  'Organiser une soirée cocooning avec une playlist douce et une lumière tamisée',
-  'Écrire chacun trois petites attentions qui feraient plaisir cette semaine',
-  'Explorer les caresses et les bisous, en respectant immédiatement chaque limite'
-];
-
-function buildDeck(userTexts: string[], periodFriendly: boolean): FantasyCard[] {
-  const userCards: FantasyCard[] = userTexts.map((text, i) => ({
-    id: `user-${i}-${Date.now()}`,
-    text,
-    isUserSubmitted: true,
-  }));
-
-  const systemPool = periodFriendly
-    ? shuffle(periodFriendlyFantasies).map((text, index) => ({ id: index + 1, text }))
-    : shuffle(systemFantasies);
-  const systemCount = Math.min(Math.max(userCards.length * SYSTEM_PER_USER, 10), systemPool.length);
-  const systemCards: FantasyCard[] = systemPool.slice(0, systemCount).map(s => ({
-    id: `sys-${s.id}`,
-    text: s.text,
-    isUserSubmitted: false,
-  }));
-
-  const deck: FantasyCard[] = [];
-  let sIdx = 0;
-  for (const uc of userCards) {
-    for (let k = 0; k < SYSTEM_PER_USER && sIdx < systemCards.length; k++, sIdx++) {
-      deck.push(systemCards[sIdx]);
-    }
-    deck.push(uc);
-  }
-  while (sIdx < systemCards.length) deck.push(systemCards[sIdx++]);
-
-  return shuffle(deck);
-}
 
 // ── Props ─────────────────────────────────────────────────────────────────────
 
@@ -110,7 +56,8 @@ const FloatingHearts: React.FC = () => {
 // ── Component ─────────────────────────────────────────────────────────────────
 
 const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
-  const [phase, setPhase] = useState<CoupleGamePhase>('setup');
+  const [phase, setPhase] = useState<CoupleGamePhase>('mode-select');
+  const [remoteMode, setRemoteMode] = useState(false);
 
   const [p1Name, setP1Name] = useState('');
   const [p2Name, setP2Name] = useState('');
@@ -277,7 +224,8 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
 
   const resetGame = () => {
     clearPersist();
-    setPhase('setup');
+    setRemoteMode(false);
+    setPhase('mode-select');
     setP1Name('');
     setP2Name('');
     setPeriodFriendly(false);
@@ -310,6 +258,63 @@ const CoupleGame: React.FC<CoupleGameProps> = ({ onBack }) => {
       <Heart className="w-6 h-6 text-rose-400 flex-shrink-0" />
     </div>
   );
+
+  // ── MODE SELECT ──────────────────────────────────────────────────────────────
+  if (phase === 'mode-select') {
+    if (remoteMode) {
+      return <CoupleGameRemote onBack={() => { setRemoteMode(false); }} />;
+    }
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-rose-950/30 to-slate-900 flex flex-col safe-area-inset">
+        <Header />
+        <div className="flex-1 flex flex-col justify-center px-4 pb-8">
+          <div className="max-w-md mx-auto w-full space-y-6">
+            <div className="text-center mb-2">
+              <div className="flex justify-center mb-4">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg animate-gentle-float">
+                  <Lock className="w-8 h-8 text-white" />
+                </div>
+              </div>
+              <h2 className="text-xl font-bold text-white mb-1">Fantasmes sous couverture</h2>
+              <p className="text-slate-400 text-sm">Choisissez comment vous voulez jouer</p>
+            </div>
+
+            <button
+              onClick={() => setPhase('setup')}
+              className="w-full p-6 rounded-2xl border-2 border-rose-500/30 bg-slate-800/60 hover:border-rose-400/60 hover:bg-slate-800 transition-all text-left mobile-button touch-action-none"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 flex items-center justify-center shadow-lg">
+                  <Users className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-bold text-lg">Sur place</h3>
+                  <p className="text-slate-400 text-sm mt-0.5">Jouez ensemble sur le même téléphone</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500" />
+              </div>
+            </button>
+
+            <button
+              onClick={() => setRemoteMode(true)}
+              className="w-full p-6 rounded-2xl border-2 border-purple-500/30 bg-slate-800/60 hover:border-purple-400/60 hover:bg-slate-800 transition-all text-left mobile-button touch-action-none"
+            >
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center shadow-lg">
+                  <Wifi className="w-7 h-7 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-white font-bold text-lg">À distance</h3>
+                  <p className="text-slate-400 text-sm mt-0.5">Chaque joueur utilise son propre téléphone</p>
+                </div>
+                <ChevronRight className="w-5 h-5 text-slate-500" />
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── SETUP ──────────────────────────────────────────────────────────────────
   if (phase === 'setup') {

@@ -173,6 +173,7 @@ export interface PendingSubmission {
 // ── Couple Mode – Fantasmes sous couverture ────────────────────────────────────
 
 export type CoupleGamePhase =
+  | 'mode-select'    // choose local vs remote
   | 'setup'          // player names
   | 'fantasy-input'  // each player enters fantasies secretly (one device, turn by turn)
   | 'ready'          // both players done, ready to reveal
