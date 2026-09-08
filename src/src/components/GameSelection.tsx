@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake } from 'lucide-react';
 import { GameType } from '../types';
 
 interface GameSelectionProps {
@@ -8,9 +8,11 @@ interface GameSelectionProps {
   onGuideOpen?: () => void;
   onClassicOpen?: () => void;
   onCoupleOpen?: () => void;
+  onAccountOpen?: () => void;
+  isAuthenticated?: boolean;
 }
 
-const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen }) => {
+const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen, onAccountOpen, isAuthenticated = false }) => {
   const allGames = [
     {
       id: 'truth-or-dare' as GameType,
@@ -99,6 +101,16 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
+          <button
+            onClick={onAccountOpen}
+            className="bg-sky-600 hover:bg-sky-500 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
+          >
+            <UserRound className="w-5 h-5" />
+            <div className="text-left">
+              <div className="text-base">{isAuthenticated ? 'Mon compte' : 'Créer mon compte'}</div>
+              <div className="text-xs opacity-80">Extensions et achats</div>
+            </div>
+          </button>
           <button
             onClick={onStoreOpen}
             className="bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
@@ -250,6 +262,15 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
               </div>
             );
           })}
+        </div>
+
+        <div className="mb-8 max-w-4xl mx-auto rounded-2xl border border-teal-400/30 bg-teal-500/10 p-5 sm:p-6 flex items-start gap-4 shadow-lg">
+          <Handshake className="w-7 h-7 text-teal-300 shrink-0 mt-0.5" />
+          <div className="text-left">
+            <h2 className="text-white font-bold text-lg">Vous êtes partenaire ou commerçant ?</h2>
+            <p className="text-teal-100/80 text-sm leading-relaxed mt-1">Nous recherchons des partenaires souhaitant offrir des réductions aux joueurs du Temple des Plaisirs. Contactez-nous pour imaginer une offre ensemble.</p>
+            <a href="mailto:admin@mak3r.tech?subject=Partenariat%20Le%20Temple%20des%20Plaisirs" className="inline-block mt-3 text-teal-300 hover:text-white font-semibold text-sm transition-colors">Proposer un partenariat</a>
+          </div>
         </div>
 
         {/* Footer */}

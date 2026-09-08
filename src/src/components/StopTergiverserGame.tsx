@@ -16,9 +16,10 @@ interface StopTergiverserGameProps {
     targetScore: number | string,
     prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => void;
+  hasPremiumAccess?: boolean;
 }
 
-const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver }) => {
+const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false }) => {
   const [gameState, setGameState] = useState<'setup' | 'playing'>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -180,6 +181,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
         onBack={onBack}
         targetScore={targetScore}
         prizes={prizes}
+        hasPremiumAccess={hasPremiumAccess}
       />
     );
   }

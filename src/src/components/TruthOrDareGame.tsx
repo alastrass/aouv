@@ -17,9 +17,10 @@ interface TruthOrDareGameProps {
     targetScore: number | string,
     prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => void;
+  hasPremiumAccess?: boolean;
 }
 
-const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver }) => {
+const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false }) => {
   const [gameState, setGameState] = useState<GameState>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -210,6 +211,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver })
         <PlayerSetup 
           onComplete={handlePlayersSetup}
           initialCustomChallenges={customChallenges}
+          hasPremiumAccess={hasPremiumAccess}
         />
       </div>
     );

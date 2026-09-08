@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Session } from '@supabase/supabase-js';
 import { AppState, GameType, Player } from './types';
+import { supabase } from './lib/supabase';
 import WelcomeScreen from './components/WelcomeScreen';
 import AgeVerification from './components/AgeVerification';
 import GameSelection from './components/GameSelection';
@@ -14,20 +16,65 @@ import GameOverScreen from './components/GameOverScreen';
 import PresentationGuide from './components/PresentationGuide';
 import ClassicGame from './components/ClassicGame';
 import CoupleGame from './components/CoupleGame';
+import AuthScreen from './components/AuthScreen';
+import AccountScreen from './components/AccountScreen';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
   const [isAgeVerified, setIsAgeVerified] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [purchases, setPurchases] = useState<Array<{ id: string; item_id: string; amount: number; currency: string; status: string; created_at: string }>>([]);
   const [players, setPlayers] = useState<Player[] | null>(null);
   const [targetScore, setTargetScore] = useState<number | string | null>(null);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } } | null>(null);
 
+  const loadAccount = async (nextSession: Session | null) => {
+    setSession(nextSession);
+    if (!nextSession) {
+      setIsAdmin(false);
+      setPurchases([]);
+      return;
+    }
+
+    const [profileResult, purchasesResult] = await Promise.all([
+      supabase.from('profiles').select('role').eq('id', nextSession.user.id).maybeSingle(),
+      supabase.from('purchases').select('id,item_id,amount,currency,status,created_at').eq('status', 'completed').order('created_at', { ascending: false }),
+    ]);
+
+    if (profileResult.error || purchasesResult.error) {
+      console.error('account data loading failed', profileResult.error ?? purchasesResult.error);
+      setIsAdmin(false);
+      setPurchases([]);
+      return;
+    }
+
+    setIsAdmin(profileResult.data?.role === 'admin');
+    setPurchases(purchasesResult.data ?? []);
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => loadAccount(data.session));
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+      setTimeout(() => void loadAccount(nextSession), 0);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  const hasPremiumAccess = isAdmin || purchases.some(purchase => purchase.item_id === 'intense-speed-extension');
+
   const handleAgeVerification = (verified: boolean) => {
     setIsAgeVerified(verified);
-    if (verified) {
-      setAppState('game-selection');
-    }
-  };
+    if (verified) setAppState('auth');
+  }; 
+
+  const handleAuthComplete = async () => {
+    const { data } = await supabase.auth.getSession();
+    await loadAccount(data.session);
+    setAppState('game-selection');
+  }; 
+
+  const handleGuest = () => setAppState('game-selection');
 
   const handleGameSelection = (gameType: GameType) => {
     setAppState(gameType);
@@ -40,6 +87,13 @@ function App() {
   const handleBackToWelcome = () => {
     setIsAgeVerified(false);
     setAppState('welcome');
+  };
+
+  const handleSignedOut = () => {
+    setSession(null);
+    setIsAdmin(false);
+    setPurchases([]);
+    setAppState('auth');
   };
 
   const handleClassicOpen = () => {
@@ -78,8 +132,16 @@ function App() {
     }
   }
 
+  if (appState === 'auth') {
+    return <AuthScreen onComplete={handleAuthComplete} onGuest={handleGuest} onBack={handleBackToWelcome} />;
+  }
+
   if (appState === 'game-selection') {
-    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} />;
+    return <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} onAccountOpen={() => setAppState(session ? 'account' : 'auth')} isAuthenticated={Boolean(session)} />;
+  }
+
+  if (appState === 'account' && session) {
+    return <AccountScreen user={session.user} isAdmin={isAdmin} hasPremiumAccess={hasPremiumAccess} purchases={purchases} onBack={handleBackToGameSelection} onSignedOut={handleSignedOut} />;
   }
 
   if (appState === 'guide') {
@@ -87,11 +149,11 @@ function App() {
   }
 
   if (appState === 'store') {
-    return <PaymentStore onBack={handleBackToGameSelection} />;
+    return <PaymentStore onBack={handleBackToGameSelection} user={session?.user ?? null} hasPremiumAccess={hasPremiumAccess} onPurchaseRecorded={handleAuthComplete} />;
   }
 
   if (appState === 'truth-or-dare') {
-    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} />;
+    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} />;
   }
 
   if (appState === 'kiffe-ou-kiffe-pas') {
@@ -115,7 +177,7 @@ function App() {
   }
 
   if (appState === 'stop-tergiverser') {
-    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} />;
+    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} />;
   }
 
   if (appState === 'game-over') {

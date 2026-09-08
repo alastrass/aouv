@@ -11,9 +11,10 @@ interface PlayerSetupProps {
   onBack?: () => void;
   targetScore?: number | string | null;
   prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
+  hasPremiumAccess?: boolean;
 }
 
-const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [], gameType = 'truth-or-dare', onBack }) => {
+const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [], gameType = 'truth-or-dare', onBack, hasPremiumAccess = false }) => {
   const [player1Name, setPlayer1Name] = useState('');
   const [player2Name, setPlayer2Name] = useState('');
   const [category, setCategory] = useState<Category>('soft');
@@ -165,13 +166,15 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 </p>
               </button>
               <button
-                onClick={() => setCategory('intense')}
-                className={`p-6 rounded-xl border-2 transition-all duration-300 ${
+                onClick={() => hasPremiumAccess && setCategory('intense')}
+                disabled={!hasPremiumAccess}
+                className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${!hasPremiumAccess ? 'opacity-60 cursor-not-allowed' : ''} ${
                   category === 'intense'
                     ? 'border-red-400 bg-red-500/20'
                     : 'border-purple-500/30 bg-slate-700/50 hover:border-purple-400/50'
                 }`}
               >
+                {!hasPremiumAccess && <span className="absolute top-3 right-3 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-1 rounded-full">Extension requise</span>}
                 <Heart className="w-8 h-8 text-red-400 mx-auto mb-3" />
                 <h3 className="text-white font-semibold mb-2">Mode Intense</h3>
                 <p className="text-purple-200 text-sm">
@@ -179,13 +182,15 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 </p>
               </button>
               <button
-                onClick={() => setCategory('speed-extreme')}
-                className={`p-6 rounded-xl border-2 transition-all duration-300 ${
+                onClick={() => hasPremiumAccess && setCategory('speed-extreme')}
+                disabled={!hasPremiumAccess}
+                className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${!hasPremiumAccess ? 'opacity-60 cursor-not-allowed' : ''} ${
                   category === 'speed-extreme'
                     ? 'border-amber-400 bg-amber-500/20'
                     : 'border-purple-500/30 bg-slate-700/50 hover:border-amber-400/50'
                 }`}
               >
+                {!hasPremiumAccess && <span className="absolute top-3 right-3 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-1 rounded-full">Extension requise</span>}
                 <Zap className="w-8 h-8 text-amber-400 mx-auto mb-3" />
                 <h3 className="text-white font-semibold mb-2">Speed & Extrême</h3>
                 <p className="text-purple-200 text-sm">

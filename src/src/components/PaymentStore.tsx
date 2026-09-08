@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from 'react';
+import { User } from '@supabase/supabase-js';
 import {
   ArrowLeft, Crown, Star, Lock, Unlock, Check, ShoppingCart,
-  CreditCard, Calendar, Infinity, ChevronRight, X
+  CreditCard, Calendar, Infinity, ChevronRight, X, Zap
 } from 'lucide-react';
 import { contentPacks } from '../data/contentPacks';
 import { paymentPlans } from '../data/paymentPlans';
 import { ContentPack, PaymentPlan } from '../types/payment';
+import { supabase } from '../lib/supabase';
 
 interface PaymentStoreProps {
   onBack: () => void;
+  user: User | null;
+  hasPremiumAccess: boolean;
+  onPurchaseRecorded: () => Promise<void>;
 }
 
 // ── Premium state (localStorage, no backend) ─────────────────────────────────
@@ -33,7 +38,7 @@ const DIFF_STYLES: Record<string, { badge: string }> = {
 };
 
 // ── Simulated purchase modal ──────────────────────────────────────────────────
-interface ModalItem { name: string; price: number; interval?: string; onSuccess: () => void }
+interface ModalItem { name: string; price: number; currency: string; interval?: string; onSuccess: () => void }
 
 const PurchaseModal: React.FC<{ item: ModalItem; onCancel: () => void }> = ({ item, onCancel }) => {
   const [step, setStep] = useState<'confirm' | 'processing' | 'success'>('confirm');
@@ -60,7 +65,7 @@ const PurchaseModal: React.FC<{ item: ModalItem; onCancel: () => void }> = ({ it
                   {item.interval && <p className="text-slate-400 text-xs mt-0.5">Renouvellement hebdomadaire</p>}
                 </div>
                 <p className="text-2xl font-black text-white">
-                  {item.price}€
+                  {item.price} {item.currency}
                   {item.interval && <span className="text-sm text-slate-400 font-normal">/sem</span>}
                 </p>
               </div>
@@ -106,7 +111,7 @@ const PurchaseModal: React.FC<{ item: ModalItem; onCancel: () => void }> = ({ it
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack }) => {
+const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAccess, onPurchaseRecorded }) => {
   const [activeTab, setActiveTab] = useState<'plans' | 'packs'>('plans');
   const [isPremium, setIsPremium] = useState(false);
   const [unlockedPacks, setUnlockedPacks] = useState<string[]>([]);
@@ -114,9 +119,9 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack }) => {
   const [expandedPack, setExpandedPack] = useState<string | null>(null);
 
   useEffect(() => {
-    setIsPremium(hasLifetime());
+    setIsPremium(hasPremiumAccess || hasLifetime());
     setUnlockedPacks(getUnlockedPacks());
-  }, []);
+  }, [hasPremiumAccess]);
 
   const isPackUnlocked = (id: string) => isPremium || unlockedPacks.includes(id);
 
@@ -124,6 +129,7 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack }) => {
     setPurchaseTarget({
       name: pack.name,
       price: pack.price,
+      currency: pack.currency,
       onSuccess: () => {
         unlockPack(pack.id);
         setUnlockedPacks(getUnlockedPacks());
@@ -136,10 +142,31 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack }) => {
     setPurchaseTarget({
       name: plan.name,
       price: plan.price,
+      currency: plan.currency,
       interval: plan.interval,
       onSuccess: () => {
         if (plan.type === 'lifetime') { setLifetimeAccess(); setIsPremium(true); }
         setPurchaseTarget(null);
+      },
+    });
+  };
+
+  const handleBuyExtension = () => {
+    if (!user) return;
+    setPurchaseTarget({
+      name: 'Extension Intense & Speed',
+      price: 5,
+      currency: 'CHF',
+      onSuccess: async () => {
+        const { error } = await supabase.rpc('record_extension_purchase', { p_item_id: 'intense-speed-extension' });
+        if (error) {
+          console.error('extension purchase failed', error);
+          setPurchaseTarget(null);
+          return;
+        }
+        setIsPremium(true);
+        setPurchaseTarget(null);
+        await onPurchaseRecorded();
       },
     });
   };
@@ -204,6 +231,13 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack }) => {
         {/* ── PLANS ── */}
         {activeTab === 'plans' && (
           <div className="space-y-5 max-w-lg mx-auto">
+            <div className={`rounded-2xl border-2 p-6 ${isPremium ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-sky-500/40 bg-sky-500/10'}`}>
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-sky-500/20 flex items-center justify-center shrink-0"><Zap className="w-7 h-7 text-sky-300" /></div>
+                <div className="flex-1"><h3 className="text-white font-bold text-lg">Extension Intense & Speed</h3><p className="text-slate-300 text-sm mt-1">Débloque les modes Intense et Speed & Extrême dans les jeux compatibles.</p><p className="text-white text-3xl font-black mt-4">5 CHF</p></div>
+              </div>
+              {isPremium ? <div className="mt-5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold text-center py-3">Extension activée</div> : <button onClick={handleBuyExtension} disabled={!user} className="mt-5 w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold transition-colors">{user ? 'Débloquer pour 5 CHF' : 'Connectez-vous pour acheter'}</button>}
+            </div>
             {paymentPlans.map((plan, pi) => {
               const isLifetimePlan = plan.type === 'lifetime';
               const alreadyOwned = isLifetimePlan && isPremium;

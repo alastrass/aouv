@@ -1,6 +1,8 @@
 export type AppState =
   | 'welcome'
   | 'age-verification'
+  | 'auth'
+  | 'account'
   | 'game-selection'
   | 'truth-or-dare'
   | 'kiffe-ou-kiffe-pas'
