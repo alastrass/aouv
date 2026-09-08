@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers, Smartphone, Download } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers, Smartphone, Download, Newspaper, Settings } from 'lucide-react';
 import { GameType } from '../types';
 import { usePWA } from '../hooks/usePWA';
 
@@ -10,10 +10,12 @@ interface GameSelectionProps {
   onClassicOpen?: () => void;
   onCoupleOpen?: () => void;
   onAccountOpen?: () => void;
+  onNewsOpen?: () => void;
+  onAdminNewsOpen?: () => void;
   isAuthenticated?: boolean;
 }
 
-const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen, onAccountOpen, isAuthenticated = false }) => {
+const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen, onGuideOpen, onClassicOpen, onCoupleOpen, onAccountOpen, onNewsOpen, onAdminNewsOpen, isAuthenticated = false }) => {
   const { isInstallable, isInstalled, installApp } = usePWA();
   const allGames = [
     {
@@ -144,6 +146,30 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
               <div className="text-xs opacity-75">Découvrir l'application</div>
             </div>
           </button>
+          {onNewsOpen && (
+            <button
+              onClick={onNewsOpen}
+              className="bg-purple-700 hover:bg-purple-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
+            >
+              <Newspaper className="w-5 h-5 text-amber-400" />
+              <div className="text-left">
+                <div className="text-base">Nouveautés</div>
+                <div className="text-xs opacity-75">Restez informé</div>
+              </div>
+            </button>
+          )}
+          {onAdminNewsOpen && (
+            <button
+              onClick={onAdminNewsOpen}
+              className="bg-emerald-700 hover:bg-emerald-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center gap-3 mobile-button touch-action-none"
+            >
+              <Settings className="w-5 h-5 text-emerald-200" />
+              <div className="text-left">
+                <div className="text-base">Gérer nouveautés</div>
+                <div className="text-xs opacity-75">Administration</div>
+              </div>
+            </button>
+          )}
         </div>
 
         {/* Classic Mode – featured card */}

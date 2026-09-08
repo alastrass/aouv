@@ -14,6 +14,8 @@ export type AppState =
   | 'couple'
   | 'store'
   | 'guide'
+  | 'news'
+  | 'admin-news'
   | 'game-over';
 
 export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser' | 'cap-ou-pas-cap';

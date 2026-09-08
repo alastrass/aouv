@@ -19,6 +19,8 @@ import ClassicGame from './components/ClassicGame';
 import CoupleGame from './components/CoupleGame';
 import AuthScreen from './components/AuthScreen';
 import AccountScreen from './components/AccountScreen';
+import NewsScreen from './components/NewsScreen';
+import AdminNewsScreen from './components/AdminNewsScreen';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('welcome');
@@ -118,6 +120,14 @@ function App() {
     setAppState('guide');
   };
 
+  const handleNewsOpen = () => {
+    setAppState('news');
+  };
+
+  const handleAdminNewsOpen = () => {
+    setAppState('admin-news');
+  };
+
   const handleGameOver = (
     finalPlayers?: Player[],
     finalTargetScore?: number | string,
@@ -145,7 +155,7 @@ function App() {
   if (appState === 'game-selection') {
     return (
       <>
-        <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} onAccountOpen={() => setAppState(session ? 'account' : 'auth')} isAuthenticated={Boolean(session)} />
+        <GameSelection onGameSelect={handleGameSelection} onStoreOpen={handleStoreOpen} onGuideOpen={handleGuideOpen} onClassicOpen={handleClassicOpen} onCoupleOpen={handleCoupleOpen} onAccountOpen={() => setAppState(session ? 'account' : 'auth')} onNewsOpen={handleNewsOpen} onAdminNewsOpen={isAdmin ? handleAdminNewsOpen : undefined} isAuthenticated={Boolean(session)} />
         <PWAInstallPrompt />
       </>
     );
@@ -157,6 +167,14 @@ function App() {
 
   if (appState === 'guide') {
     return <PresentationGuide onBack={handleBackToGameSelection} />;
+  }
+
+  if (appState === 'news') {
+    return <NewsScreen onBack={handleBackToGameSelection} />;
+  }
+
+  if (appState === 'admin-news' && isAdmin) {
+    return <AdminNewsScreen onBack={handleBackToGameSelection} />;
   }
 
   if (appState === 'store') {
