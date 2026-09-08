@@ -62,6 +62,7 @@ function App() {
   }, []);
 
   const hasPremiumAccess = isAdmin || purchases.some(purchase => purchase.item_id === 'intense-speed-extension');
+  const hasForetAccess = isAdmin || purchases.some(purchase => purchase.item_id === 'foret-extension');
 
   const handleAgeVerification = (verified: boolean) => {
     setIsAgeVerified(verified);
@@ -149,11 +150,11 @@ function App() {
   }
 
   if (appState === 'store') {
-    return <PaymentStore onBack={handleBackToGameSelection} user={session?.user ?? null} hasPremiumAccess={hasPremiumAccess} onPurchaseRecorded={handleAuthComplete} />;
+    return <PaymentStore onBack={handleBackToGameSelection} user={session?.user ?? null} hasPremiumAccess={hasPremiumAccess} hasForetAccess={hasForetAccess} onPurchaseRecorded={handleAuthComplete} />;
   }
 
   if (appState === 'truth-or-dare') {
-    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} />;
+    return <TruthOrDareGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} hasForetAccess={hasForetAccess} />;
   }
 
   if (appState === 'kiffe-ou-kiffe-pas') {
@@ -177,7 +178,7 @@ function App() {
   }
 
   if (appState === 'stop-tergiverser') {
-    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} />;
+    return <StopTergiverserGame onBack={handleBackToGameSelection} onGameOver={handleGameOver} hasPremiumAccess={hasPremiumAccess} hasForetAccess={hasForetAccess} />;
   }
 
   if (appState === 'game-over') {

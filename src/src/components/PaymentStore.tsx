@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { User } from '@supabase/supabase-js';
 import {
   ArrowLeft, Crown, Star, Lock, Unlock, Check, ShoppingCart,
-  CreditCard, Calendar, Infinity, ChevronRight, X, Zap
+  CreditCard, Calendar, Infinity, ChevronRight, X, Zap, TreePine
 } from 'lucide-react';
 import { contentPacks } from '../data/contentPacks';
 import { paymentPlans } from '../data/paymentPlans';
@@ -13,6 +13,7 @@ interface PaymentStoreProps {
   onBack: () => void;
   user: User | null;
   hasPremiumAccess: boolean;
+  hasForetAccess: boolean;
   onPurchaseRecorded: () => Promise<void>;
 }
 
@@ -111,7 +112,7 @@ const PurchaseModal: React.FC<{ item: ModalItem; onCancel: () => void }> = ({ it
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAccess, onPurchaseRecorded }) => {
+const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAccess, hasForetAccess, onPurchaseRecorded }) => {
   const [activeTab, setActiveTab] = useState<'plans' | 'packs'>('plans');
   const [isPremium, setIsPremium] = useState(false);
   const [unlockedPacks, setUnlockedPacks] = useState<string[]>([]);
@@ -122,6 +123,8 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAcc
     setIsPremium(hasPremiumAccess || hasLifetime());
     setUnlockedPacks(getUnlockedPacks());
   }, [hasPremiumAccess]);
+
+  const isForetUnlocked = hasForetAccess;
 
   const isPackUnlocked = (id: string) => isPremium || unlockedPacks.includes(id);
 
@@ -147,6 +150,25 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAcc
       onSuccess: () => {
         if (plan.type === 'lifetime') { setLifetimeAccess(); setIsPremium(true); }
         setPurchaseTarget(null);
+      },
+    });
+  };
+
+  const handleBuyForetExtension = () => {
+    if (!user) return;
+    setPurchaseTarget({
+      name: 'À la forêt',
+      price: 5,
+      currency: 'CHF',
+      onSuccess: async () => {
+        const { error } = await supabase.rpc('record_extension_purchase', { p_item_id: 'foret-extension' });
+        if (error) {
+          console.error('foret extension purchase failed', error);
+          setPurchaseTarget(null);
+          return;
+        }
+        setPurchaseTarget(null);
+        await onPurchaseRecorded();
       },
     });
   };
@@ -237,6 +259,13 @@ const PaymentStore: React.FC<PaymentStoreProps> = ({ onBack, user, hasPremiumAcc
                 <div className="flex-1"><h3 className="text-white font-bold text-lg">Extension Intense & Speed</h3><p className="text-slate-300 text-sm mt-1">Débloque les modes Intense et Speed & Extrême dans les jeux compatibles.</p><p className="text-white text-3xl font-black mt-4">5 CHF</p></div>
               </div>
               {isPremium ? <div className="mt-5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold text-center py-3">Extension activée</div> : <button onClick={handleBuyExtension} disabled={!user} className="mt-5 w-full py-3.5 rounded-xl bg-sky-500 hover:bg-sky-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold transition-colors">{user ? 'Débloquer pour 5 CHF' : 'Connectez-vous pour acheter'}</button>}
+            </div>
+            <div className={`rounded-2xl border-2 p-6 ${isForetUnlocked ? 'border-emerald-500/40 bg-emerald-500/10' : 'border-emerald-500/40 bg-emerald-500/10'}`}>
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center shrink-0"><TreePine className="w-7 h-7 text-emerald-300" /></div>
+                <div className="flex-1"><h3 className="text-white font-bold text-lg">À la forêt</h3><p className="text-slate-300 text-sm mt-1">Des défis osés à jouer en pleine nature, uniquement dans un lieu privé et autorisé.</p><p className="text-white text-3xl font-black mt-4">5 CHF</p></div>
+              </div>
+              {isForetUnlocked ? <div className="mt-5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-semibold text-center py-3">Extension activée</div> : <button onClick={handleBuyForetExtension} disabled={!user} className="mt-5 w-full py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 disabled:cursor-not-allowed text-slate-950 font-bold transition-colors">{user ? 'Débloquer pour 5 CHF' : 'Connectez-vous pour acheter'}</button>}
             </div>
             {paymentPlans.map((plan, pi) => {
               const isLifetimePlan = plan.type === 'lifetime';

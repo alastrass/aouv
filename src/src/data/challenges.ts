@@ -1,4 +1,5 @@
 import { Challenge, Category } from '../types';
+import { foretChallenges } from './foretChallenges';
 
 export const challenges: Record<Category, Challenge[]> = {
   soft: [
@@ -211,6 +212,7 @@ export const challenges: Record<Category, Challenge[]> = {
     { id: 199, type: "dare", category: "intense", text: "Parcoure tout son corps avec tes lèvres jusqu'à atteindre son sexe pour le prendre dans ta bouche." },
     { id: 200, type: "dare", category: "intense", text: "JOKER SEXE : Tu imposes l'acte ou le fantasme sexuel de ton choix à ton partenaire sur le champ !" }
   ],
+  foret: foretChallenges,
   'speed-extreme': [
     { id: 201, type: "dare", category: "speed-extreme", text: "Retire un vêtement à ton partenaire avec les dents en moins de 15 secondes." },
     { id: 202, type: "dare", category: "speed-extreme", text: "Fais une fellation / un cunnilingus éclair de 30 secondes chrono, puis arrête net." },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Settings, Plus, Trash2, Heart, Zap, HeartPulse, Timer } from 'lucide-react';
+import { Users, Settings, Plus, Trash2, Heart, Zap, HeartPulse, Timer, TreePine } from 'lucide-react';
 import { Player, Category, Challenge, CustomChallengeInput, Orientation } from '../types';
 import PrizeDefinition from './PrizeDefinition';
 import TargetScoreSetup from './TargetScoreSetup';
@@ -12,9 +12,10 @@ interface PlayerSetupProps {
   targetScore?: number | string | null;
   prizes?: { [playerId: number]: { prize: string; isVisible: boolean } } | null;
   hasPremiumAccess?: boolean;
+  hasForetAccess?: boolean;
 }
 
-const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [], gameType = 'truth-or-dare', onBack, hasPremiumAccess = false }) => {
+const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChallenges = [], gameType = 'truth-or-dare', onBack, hasPremiumAccess = false, hasForetAccess = false }) => {
   const [player1Name, setPlayer1Name] = useState('');
   const [player2Name, setPlayer2Name] = useState('');
   const [category, setCategory] = useState<Category>('soft');
@@ -150,7 +151,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
           {/* Category Selection */}
           <div className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">Mode de Jeu</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <button
                 onClick={() => setCategory('soft')}
                 className={`p-6 rounded-xl border-2 transition-all duration-300 ${
@@ -196,6 +197,20 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                 <p className="text-purple-200 text-sm">
                   Défis très hard enchaînés à un rythme ultra-rapide, sans temps mort
                 </p>
+              </button>
+              <button
+                onClick={() => hasForetAccess && setCategory('foret')}
+                disabled={!hasForetAccess}
+                className={`relative p-6 rounded-xl border-2 transition-all duration-300 ${!hasForetAccess ? 'opacity-60 cursor-not-allowed' : ''} ${
+                  category === 'foret'
+                    ? 'border-emerald-400 bg-emerald-500/20'
+                    : 'border-purple-500/30 bg-slate-700/50 hover:border-emerald-400/50'
+                }`}
+              >
+                {!hasForetAccess && <span className="absolute top-3 right-3 text-xs font-bold text-amber-300 bg-amber-500/15 border border-amber-500/30 px-2 py-1 rounded-full">Extension requise</span>}
+                <TreePine className="w-8 h-8 text-emerald-400 mx-auto mb-3" />
+                <h3 className="text-white font-semibold mb-2">À la forêt</h3>
+                <p className="text-purple-200 text-sm">Défis osés à jouer en pleine nature, dans un lieu privé et autorisé</p>
               </button>
             </div>
           </div>
@@ -344,6 +359,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
                       <option value="soft">Soft</option>
                       <option value="intense">Intense</option>
                       <option value="speed-extreme">Speed & Extrême</option>
+                      <option value="foret">À la forêt</option>
                     </select>
                   </div>
                 </div>
@@ -382,7 +398,7 @@ const PlayerSetup: React.FC<PlayerSetupProps> = ({ onComplete, initialCustomChal
             {filteredCustomChallenges.length > 0 && (
               <div className="space-y-2">
                 <p className="text-purple-200 text-sm mb-3">
-                  Défis personnalisés pour le mode {category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'} :
+                  Défis personnalisés pour le mode {category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : category === 'foret' ? 'À la forêt' : 'Speed & Extrême'} :
                 </p>
                 {filteredCustomChallenges.map((challenge) => (
                   <div key={challenge.id} className="bg-slate-700/30 rounded-lg p-3 flex items-center justify-between">

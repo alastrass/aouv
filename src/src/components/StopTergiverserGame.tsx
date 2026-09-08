@@ -17,9 +17,10 @@ interface StopTergiverserGameProps {
     prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => void;
   hasPremiumAccess?: boolean;
+  hasForetAccess?: boolean;
 }
 
-const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false }) => {
+const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false, hasForetAccess = false }) => {
   const [gameState, setGameState] = useState<'setup' | 'playing'>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -36,6 +37,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const [targetScore, setTargetScore] = useState<number | string>(10);
   const [prizes, setPrizes] = useState<{ [playerId: number]: { prize: string; isVisible: boolean } }>({});
   const isSpeedExtreme = category === 'speed-extreme';
+  const isForet = category === 'foret';
 
   useEffect(() => {
     try {
@@ -108,7 +110,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = periodFriendly
       ? periodFriendlyChallenges.filter(challenge => challenge.type === 'dare')
-      : (orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category].filter(challenge => challenge.type === 'dare');
+      : (category === 'foret' ? challenges : orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category].filter(challenge => challenge.type === 'dare');
     if (turnCount >= 2 && !periodFriendly) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category && c.type === 'dare')];
     }
@@ -182,6 +184,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
         targetScore={targetScore}
         prizes={prizes}
         hasPremiumAccess={hasPremiumAccess}
+        hasForetAccess={hasForetAccess}
       />
     );
   }
@@ -203,7 +206,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                 ? 'bg-gradient-to-r from-amber-400 to-orange-400'
                 : 'bg-gradient-to-r from-rose-400 to-red-400'
             }`}>
-            {periodFriendly ? 'Pas en forme' : isSpeedExtreme ? 'Speed & Extrême' : 'Arrête de Tergiverser'}
+            {periodFriendly ? 'Pas en forme' : isForet ? 'À la forêt' : isSpeedExtreme ? 'Speed & Extrême' : 'Arrête de Tergiverser'}
           </h1>
 
           <button
@@ -244,7 +247,7 @@ const StopTergiverserGame: React.FC<StopTergiverserGameProps> = ({ onBack, onGam
                           ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
                           : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
                       }`}>
-                    {periodFriendly ? '♡ Défi douceur' : isSpeedExtreme ? '⚡ Défi Extrême' : '💫 Défi d\'Action'}
+                    {periodFriendly ? 'Défi douceur' : isForet ? 'Défi forêt' : isSpeedExtreme ? 'Défi Extrême' : 'Défi d\'Action'}
                   </div>
                 </div>
 

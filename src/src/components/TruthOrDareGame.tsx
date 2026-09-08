@@ -18,9 +18,10 @@ interface TruthOrDareGameProps {
     prizes: { [playerId: number]: { prize: string; isVisible: boolean } }
   ) => void;
   hasPremiumAccess?: boolean;
+  hasForetAccess?: boolean;
 }
 
-const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false }) => {
+const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, hasPremiumAccess = false, hasForetAccess = false }) => {
   const [gameState, setGameState] = useState<GameState>('setup');
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState(0);
@@ -110,7 +111,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, h
   const getAllChallenges = (): Challenge[] => {
     const baseChallenges = periodFriendly
       ? periodFriendlyChallenges.filter(challenge => challenge.type === 'truth' || challenge.type === 'dare')
-      : (orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category];
+      : (category === 'foret' ? challenges : orientation === 'gay' ? gayChallenges : orientation === 'lesbian' ? lesbianChallenges : challenges)[category];
     if (turnCount >= 2) {
       return [...baseChallenges, ...customChallenges.filter(c => c.category === category)];
     }
@@ -212,6 +213,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, h
           onComplete={handlePlayersSetup}
           initialCustomChallenges={customChallenges}
           hasPremiumAccess={hasPremiumAccess}
+          hasForetAccess={hasForetAccess}
         />
       </div>
     );
@@ -237,7 +239,7 @@ const TruthOrDareGame: React.FC<TruthOrDareGameProps> = ({ onBack, onGameOver, h
                 <h1 className="text-xl sm:text-2xl font-bold text-white">Action ou Vérité</h1>
                 <Heart className="w-6 h-6 text-rose-400" />
               </div>
-              <p className="text-purple-200 text-sm">{periodFriendly ? 'Mode Pas en forme' : `Mode ${category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : 'Speed & Extrême'}`}{autoTimer ? ' · Chrono auto' : ''}</p>
+              <p className="text-purple-200 text-sm">{periodFriendly ? 'Mode Pas en forme' : `Mode ${category === 'soft' ? 'Soft' : category === 'intense' ? 'Intense' : category === 'foret' ? 'À la forêt' : 'Speed & Extrême'}`}{autoTimer ? ' · Chrono auto' : ''}</p>
             </div>
             
             <div className="w-16"></div>
