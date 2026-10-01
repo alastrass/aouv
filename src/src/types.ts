@@ -12,13 +12,14 @@ export type AppState =
   | 'cap-ou-pas-cap'
   | 'classic'
   | 'couple'
+  | 'shooting-time'
   | 'store'
   | 'guide'
   | 'news'
   | 'admin-news'
   | 'game-over';
 
-export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser' | 'cap-ou-pas-cap';
+export type GameType = 'truth-or-dare' | 'kiffe-ou-kiffe-pas' | 'karma-sutra' | 'puzzle' | 'stop-tergiverser' | 'cap-ou-pas-cap' | 'shooting-time';
 
 export type GameState = 'setup' | 'playing';
 
@@ -200,6 +201,32 @@ export interface CoupleGameState {
   inputTurn: 1 | 2;
   player1Done: boolean;
   player2Done: boolean;
+}
+
+// ── Shooting Club ─────────────────────────────────────────────────────────────
+
+export type ShootingPhase = 'setup' | 'playing' | 'gallery';
+
+export type ShootingIntensity = 'soft' | 'hot' | 'hard' | 'extreme';
+
+export type ShootingMediaType = 'photo' | 'video';
+
+export interface ShootingChallenge {
+  id: number;
+  intensity: ShootingIntensity;
+  mediaType: ShootingMediaType;
+  instruction: string;
+  durationSeconds?: number;
+}
+
+export interface ShootingCapture {
+  challengeId: number;
+  instruction: string;
+  intensity: ShootingIntensity;
+  mediaType: ShootingMediaType;
+  dataUrl: string;
+  playerName: string;
+  timestamp: number;
 }
 
 export interface PuzzleSession {

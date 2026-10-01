@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers, Smartphone, Download, Newspaper, Settings } from 'lucide-react';
+import { Heart, Sparkles, Lock, Play, ShoppingCart, BookOpen, Zap, UserRound, Handshake, Layers, Smartphone, Download, Newspaper, Settings, Camera } from 'lucide-react';
 import { GameType } from '../types';
 import { usePWA } from '../hooks/usePWA';
 
@@ -84,6 +84,17 @@ const GameSelection: React.FC<GameSelectionProps> = ({ onGameSelect, onStoreOpen
       available: true,
       players: '2 joueurs',
       duration: '15-30 min'
+    },
+    {
+      id: 'shooting-time' as GameType,
+      title: 'Shooting Club',
+      description: 'Des défis photo et vidéo coquins ! Tour à tour, l\'un filme et l\'autre pose selon l\'instruction tirée au sort. 4 niveaux d\'intensité, du tendre au très osé.',
+      icon: Camera,
+      color: 'from-cyan-600 to-blue-600',
+      borderColor: 'border-cyan-500/30',
+      available: true,
+      players: '2 joueurs',
+      duration: '20-40 min'
     }
   ];
 
